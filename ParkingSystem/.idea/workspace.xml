@@ -273,6 +273,11 @@
               <item name="soa" type="462c0819:PsiDirectoryNode" />
               <item name="dto" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="ParkingSystem" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ParkingSystem" type="462c0819:PsiDirectoryNode" />
+              <item name="TakenMockSystem" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -282,6 +287,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/pom.xml" />
@@ -397,16 +403,15 @@
       <option name="presentableId" value="Default" />
       <updated>1558718692711</updated>
       <workItem from="1558718697983" duration="6164000" />
-      <workItem from="1558728582275" duration="904000" />
+      <workItem from="1558728582275" duration="1340000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7068000" />
+    <option name="totallyTimeSpent" value="7504000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="835" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22103004" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
