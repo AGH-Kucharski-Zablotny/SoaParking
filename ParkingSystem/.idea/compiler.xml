@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="EjbApi" />
+        <module name="RestApi" />
+        <module name="Dashboard" />
+        <module name="TakenMockSystem" />
+        <module name="EjbImplementation" />
+        <module name="SoapApi" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Dashboard" target="1.10" />
+      <module name="EjbApi" target="1.10" />
+      <module name="EjbImplementation" target="1.10" />
+      <module name="ParkingSystem" target="1.10" />
+      <module name="RestApi" target="1.10" />
+      <module name="SoapApi" target="1.10" />
+      <module name="TakenMockSystem" target="1.10" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
