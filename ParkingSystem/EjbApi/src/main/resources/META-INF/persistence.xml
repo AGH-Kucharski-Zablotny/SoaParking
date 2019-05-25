@@ -7,7 +7,7 @@
     <persistence-unit name="Parking">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>java:/Parking</jta-data-source>
-        <class>pl.agh.soa.dto.ParkingLotData</class>
+        <class>pl.agh.soa.dto.ParkingSlotData</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL55Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>

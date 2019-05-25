@@ -6,7 +6,7 @@ import java.util.Date;
 @Entity
 @Table(name = "Parks")
 @Access(AccessType.FIELD)
-public class ParksData
+public class ParksData extends AbstractDTO
 {
     @Id
     @GeneratedValue

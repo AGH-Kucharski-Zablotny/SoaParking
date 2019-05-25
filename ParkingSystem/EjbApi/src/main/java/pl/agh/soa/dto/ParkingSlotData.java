@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "ParkingSlots")
 @Access(AccessType.FIELD)
-public class ParkingSlotData
+public class ParkingSlotData extends AbstractDTO
 {
     public interface SlotStatus
     {

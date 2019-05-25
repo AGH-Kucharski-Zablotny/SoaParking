@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "Users")
 @Access(AccessType.FIELD)
-public class UserData
+public class UserData extends AbstractDTO
 {
     @Id
     @GeneratedValue
