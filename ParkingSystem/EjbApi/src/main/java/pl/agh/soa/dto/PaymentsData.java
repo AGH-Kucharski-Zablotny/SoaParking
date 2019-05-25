@@ -13,10 +13,13 @@ public class PaymentsData extends AbstractDTO
     @Column(name = "Id", nullable = false)
     private int id;
 
+    @Column(name = "PaymentDate", nullable = false)
+    private Date paymentDate;
+
     @Column(name = "DateBoughtTo", nullable = false)
     private Date dateBoughtTo;
 
-    @OneToOne
+    @ManyToOne
     private ParksData parksData;
 
     public int getId()
@@ -27,6 +30,16 @@ public class PaymentsData extends AbstractDTO
     public void setId(int id)
     {
         this.id = id;
+    }
+
+    public Date getPaymentDate()
+    {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(Date paymentDate)
+    {
+        this.paymentDate = paymentDate;
     }
 
     public Date getDateBoughtTo()

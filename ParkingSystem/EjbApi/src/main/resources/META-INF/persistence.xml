@@ -8,6 +8,9 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>java:/Parking</jta-data-source>
         <class>pl.agh.soa.dto.ParkingSlotData</class>
+        <class>pl.agh.soa.dto.ParksData</class>
+        <class>pl.agh.soa.dto.PaymentsData</class>
+        <class>pl.agh.soa.dto.UserData</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL55Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>

@@ -19,6 +19,9 @@ public class ParksData extends AbstractDTO
     @Column(name = "DateParked", nullable = false)
     private Date dateParked;
 
+    @Column(name = "DateLeft")
+    private Date dateLeft;
+
     @OneToOne
     private ParkingSlotData parkingSlotData;
 
@@ -50,6 +53,16 @@ public class ParksData extends AbstractDTO
     public void setDateParked(Date dateParked)
     {
         this.dateParked = dateParked;
+    }
+
+    public Date getDateLeft()
+    {
+        return dateLeft;
+    }
+
+    public void setDateLeft(Date dateLeft)
+    {
+        this.dateLeft = dateLeft;
     }
 
     public ParkingSlotData getParkingSlotData()
