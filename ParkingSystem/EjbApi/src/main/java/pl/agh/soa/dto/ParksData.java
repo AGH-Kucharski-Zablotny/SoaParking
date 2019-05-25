@@ -22,7 +22,7 @@ public class ParksData extends AbstractDTO
     @Column(name = "DateLeft")
     private Date dateLeft;
 
-    @OneToOne
+    @ManyToOne
     private ParkingSlotData parkingSlotData;
 
     public int getId()
