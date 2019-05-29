@@ -1,4 +1,4 @@
-package pl.agh.soa.ejb.dao;
+package pl.agh.soa.dao;
 
 import pl.agh.soa.dto.ParksData;
 

@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class RestTestResource {
 
-    @EJB(lookup = "java:global/EjbSlotImpl-1.0/SlotManagerBean!pl.agh.soa.ejb.services.local.SlotManagerLocal")
+    @EJB(lookup = "java:global/EjbPaymentImpl-1.0/TestServiceBean!pl.agh.soa.ejb.services.remote.TestServiceRemote")
     TestServiceRemote testService;
 
     @GET
