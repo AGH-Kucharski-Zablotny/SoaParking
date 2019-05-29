@@ -9,7 +9,7 @@ import javax.inject.Named;
 @RequestScoped
 @Named("TestController")
 public class TestController {
-    @EJB(lookup = "java:global/EjbImplementation-1.0/TestServiceBean!pl.agh.soa.ejb.services.remote.TestServiceRemote")
+    @EJB(lookup = "java:global/EjbSlotImpl-1.0/SlotManagerBean!pl.agh.soa.ejb.services.local.SlotManagerLocal")
     TestService testService;
 
     public String testConnection() {

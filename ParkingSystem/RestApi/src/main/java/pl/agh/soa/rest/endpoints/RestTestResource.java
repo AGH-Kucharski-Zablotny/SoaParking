@@ -1,6 +1,7 @@
 package pl.agh.soa.rest.endpoints;
 
 import pl.agh.soa.ejb.services.TestService;
+import pl.agh.soa.ejb.services.remote.TestServiceRemote;
 
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
@@ -14,8 +15,8 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class RestTestResource {
 
-    @EJB(lookup = "java:global/EjbImplementation-1.0/TestServiceBean!pl.agh.soa.ejb.services.remote.TestServiceRemote")
-    TestService testService;
+    @EJB(lookup = "java:global/EjbSlotImpl-1.0/SlotManagerBean!pl.agh.soa.ejb.services.local.SlotManagerLocal")
+    TestServiceRemote testService;
 
     @GET
     public String getStatus() {
