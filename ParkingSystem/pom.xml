@@ -16,6 +16,7 @@
         <module>EjbPaymentImpl</module>
         <module>EjbSlotImpl</module>
         <module>EjbAccountImpl</module>
+        <module>EjbParksImpl</module>
     </modules>
 
     <packaging>pom</packaging>
