@@ -10,6 +10,7 @@ import pl.agh.soa.exceptions.SlotOccupiedException;
 import javax.ejb.*;
 import java.util.Date;
 
+import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.EMPTY;
 import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.PARKED;
 
 @Remote(ParksManagerRemote.class)
@@ -41,6 +42,15 @@ public class ParksManagerBean implements ParksManagerRemote
             ParksDAO.getInstance().addItem(park);
             parkingSlot.setStatus(PARKED);
             slotManager.updateSlot(parkingSlot);
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void releaseParkingSlot(Integer slotId)
+    {
+        ParkingSlotData parkingSlot = slotManager.getSlot(slotId);
+        parkingSlot.setStatus(EMPTY);
+        slotManager.updateSlot(parkingSlot);
     }
 
     @Override
