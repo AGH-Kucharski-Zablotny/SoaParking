@@ -20,6 +20,9 @@ public class ParksManagerBean implements ParksManagerRemote
     @EJB(lookup = "java:global/EjbSlotImpl-1.0/SlotManagerBean!pl.agh.soa.ejb.services.remote.SlotManagerRemote")
     private SlotManagerRemote slotManager;
 
+    @EJB(lookup = "java:global/EjbParksImpl-1.0/ParksManagerBean!pl.agh.soa.ejb.services.remote.ParksManagerRemote")
+    private ParksManagerRemote parksManager;
+
     private ParksData prepareNewPark(ParkingSlotData parkingSlot, String registrationPlate, Date dateParked)
     {
         ParksData park = new ParksData();
@@ -46,8 +49,11 @@ public class ParksManagerBean implements ParksManagerRemote
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void releaseParkingSlot(Integer slotId)
+    public void releaseParkingSlot(Integer slotId, String registrationPlate)
     {
+        ParksData park = parksManager.getLatestParkForData(registrationPlate, slotId);
+        park.setDateLeft(new Date());
+        ParksDAO.getInstance().updateItem(park);
         ParkingSlotData parkingSlot = slotManager.getSlot(slotId);
         parkingSlot.setStatus(EMPTY);
         slotManager.updateSlot(parkingSlot);

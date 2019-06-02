@@ -9,5 +9,5 @@ public interface ParksManager
 {
     ParksData getLatestParkForData(String registrationPlate, Integer slotId);
     void parkFreeSlot(Integer slotId, String registrationPlate, Date dateParked) throws SlotOccupiedException;
-    void releaseParkingSlot(Integer slotId);
+    void releaseParkingSlot(Integer slotId, String registrationPlate);
 }
