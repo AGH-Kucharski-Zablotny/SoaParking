@@ -28,6 +28,7 @@ public class ParksManagerBean implements ParksManagerRemote
         return park;
     }
 
+    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void parkFreeSlot(Integer slotId, String registrationPlate, Date dateParked) throws SlotOccupiedException
     {
@@ -36,13 +37,10 @@ public class ParksManagerBean implements ParksManagerRemote
         {
             throw new SlotOccupiedException();
         }
-        else
-        {
             ParksData park = prepareNewPark(parkingSlot, registrationPlate, dateParked);
             ParksDAO.getInstance().addItem(park);
             parkingSlot.setStatus(PARKED);
             slotManager.updateSlot(parkingSlot);
-        }
     }
 
     @Override
