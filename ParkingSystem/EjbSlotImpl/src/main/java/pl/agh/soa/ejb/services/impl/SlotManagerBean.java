@@ -7,8 +7,11 @@ import pl.agh.soa.ejb.services.local.SlotManagerLocal;
 import pl.agh.soa.ejb.services.remote.SlotManagerRemote;
 
 import javax.ejb.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.sql.DatabaseMetaData;
 import java.util.Date;
+import java.util.List;
 
 @Remote(SlotManagerRemote.class)
 @Local(SlotManagerLocal.class)
@@ -16,17 +19,43 @@ import java.util.Date;
 public class SlotManagerBean implements SlotManagerLocal, SlotManagerRemote
 {
     @Override
-    public String testest() {
-        return "asdasd";
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void addSlot(ParkingSlotData slot)
+    {
+        ParkingSlotDAO.getInstance().addItem(slot);
     }
 
     @Override
-    public ParkingSlotData getSlot(Integer slotId) {
-        return null;
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void updateSlot(ParkingSlotData slot)
+    {
+        ParkingSlotDAO.getInstance().updateItem(slot);
     }
 
     @Override
-    public void updateSlot(ParkingSlotData slot) {
+    public ParkingSlotData getSlot(Integer slotId)
+    {
+        return ParkingSlotDAO.getInstance().getItem(slotId);
+    }
 
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public List<ParkingSlotData> getAllParkingSlots()
+    {
+        return ParkingSlotDAO.getInstance().getItems();
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteSlot(ParkingSlotData slot)
+    {
+        ParkingSlotDAO.getInstance().deleteItem(slot);
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteSlot(Integer slotId)
+    {
+        ParkingSlotDAO.getInstance().deleteItem(slotId);
     }
 }
