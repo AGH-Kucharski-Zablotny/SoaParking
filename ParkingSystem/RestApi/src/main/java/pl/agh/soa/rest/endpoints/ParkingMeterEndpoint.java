@@ -19,7 +19,7 @@ public class ParkingMeterEndpoint
     @POST
     @Produces("application/json")
     @Consumes("application/json")
-    @Path("/platnosc")
+    @Path("/payment")
     public Response createPayment(PaymentsData payment, Integer slotId)
     {
         try
