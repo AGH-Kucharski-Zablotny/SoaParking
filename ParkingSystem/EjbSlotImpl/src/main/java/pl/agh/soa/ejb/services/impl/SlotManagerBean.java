@@ -10,8 +10,13 @@ import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.DatabaseMetaData;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+
+import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.EMPTY;
+import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.PARKED;
 
 @Remote(SlotManagerRemote.class)
 @Local(SlotManagerLocal.class)
@@ -57,5 +62,21 @@ public class SlotManagerBean implements SlotManagerLocal, SlotManagerRemote
     public void deleteSlot(Integer slotId)
     {
         ParkingSlotDAO.getInstance().deleteItem(slotId);
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public List<ParkingSlotData> getParkingSlotsByStatus(String status)
+    {
+        List<ParkingSlotData> allSlots = ParkingSlotDAO.getInstance().getItems();
+        List<ParkingSlotData> freeSlots = new ArrayList<>();
+        for(ParkingSlotData parkingSlot : allSlots)
+        {
+            if(parkingSlot.getStatus().equals(status))
+            {
+                freeSlots.add(parkingSlot);
+            }
+        }
+        return freeSlots;
     }
 }

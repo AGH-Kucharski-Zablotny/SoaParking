@@ -12,4 +12,5 @@ public interface SlotManager
     List<ParkingSlotData> getAllParkingSlots();
     void deleteSlot(ParkingSlotData slot);
     void deleteSlot(Integer slotId);
+    List<ParkingSlotData> getParkingSlotsByStatus(String status);
 }

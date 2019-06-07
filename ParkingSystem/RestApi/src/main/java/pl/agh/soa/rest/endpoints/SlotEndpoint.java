@@ -20,4 +20,22 @@ public class SlotEndpoint
         // response status ok
         return Response.status(200).entity(slotManager.getSlot(slotId)).build();
     }
+
+    @GET
+    @Produces("application/json")
+    @Path("/")
+    public Response getFreeSlots()
+    {
+        // response status ok
+        return Response.status(200).entity(slotManager.getParkingSlotsByStatus("EMPTY")).build();
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/")
+    public Response getOccupiedSlots()
+    {
+        // response status ok
+        return Response.status(200).entity(slotManager.getParkingSlotsByStatus("PARKED")).build();
+    }
 }
