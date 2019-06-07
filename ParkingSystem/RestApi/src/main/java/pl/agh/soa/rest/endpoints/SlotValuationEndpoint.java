@@ -5,6 +5,7 @@ import pl.agh.soa.ejb.services.remote.PaymentManagerRemote;
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.util.Date;
@@ -17,8 +18,8 @@ public class SlotValuationEndpoint
 
     @GET
     @Produces("application/json")
-    @Path("/")
-    public Response getSlotValuationByDate(Date datePrice)
+    @Path("/date/{dateTo}")
+    public Response getSlotValuationByDate(@PathParam("dateTo") Date datePrice)
     {
         // response status ok
         return Response.status(200).entity(paymentManager.getPriceForDate(datePrice)).build();
@@ -26,8 +27,8 @@ public class SlotValuationEndpoint
 
     @GET
     @Produces("application/json")
-    @Path("/")
-    public Response getSlotValuationByHours(Long hours)
+    @Path("/hours/{hours}")
+    public Response getSlotValuationByHours(@PathParam("hours") Long hours)
     {
         // response status ok
         return Response.status(200).entity(paymentManager.getPriceForHours(hours)).build();
