@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.EMPTY;
 import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.PARKED;
@@ -69,14 +70,6 @@ public class SlotManagerBean implements SlotManagerLocal, SlotManagerRemote
     public List<ParkingSlotData> getParkingSlotsByStatus(String status)
     {
         List<ParkingSlotData> allSlots = ParkingSlotDAO.getInstance().getItems();
-        List<ParkingSlotData> freeSlots = new ArrayList<>();
-        for(ParkingSlotData parkingSlot : allSlots)
-        {
-            if(parkingSlot.getStatus().equals(status))
-            {
-                freeSlots.add(parkingSlot);
-            }
-        }
-        return freeSlots;
+        return allSlots.stream().filter(c -> c.getStatus().contains(status)).collect(Collectors.toList());
     }
 }
