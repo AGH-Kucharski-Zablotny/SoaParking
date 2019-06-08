@@ -1,48 +1,69 @@
 package pl.agh.soa.ejb.services.impl;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 import pl.agh.soa.dao.PaymentsDAO;
 import pl.agh.soa.dao.RatesDAO;
 import pl.agh.soa.dto.ParkingSlotData;
 import pl.agh.soa.dto.ParksData;
 import pl.agh.soa.dto.PaymentsData;
 import pl.agh.soa.dto.RatesData;
-import pl.agh.soa.ejb.services.remote.ParksManagerRemote;
+import pl.agh.soa.ejb.services.ApplicationManager;
 import pl.agh.soa.ejb.services.remote.PaymentManagerRemote;
-import pl.agh.soa.ejb.services.remote.SlotManagerRemote;
+import pl.agh.soa.jms.dto.ParkGuardNotificationData;
+import pl.agh.soa.rest.RestClient;
+import pl.agh.soa.tasks.PaymentCheckTask;
 
+import javax.annotation.Resource;
 import javax.ejb.*;
+import javax.inject.Inject;
+import javax.jms.JMSContext;
+import javax.jms.Topic;
 import javax.persistence.NoResultException;
-import java.time.Duration;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.NotFoundException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.Timer;
 
 @Remote(PaymentManagerRemote.class)
-@Stateless
+@Stateful
 public class PaymentManagerBean implements PaymentManagerRemote {
 
-    @EJB(lookup = "java:global/EjbParksImpl-1.0/ParksManagerBean!pl.agh.soa.ejb.services.remote.ParksManagerRemote")
-    private ParksManagerRemote parksManager;
+    @EJB(lookup = "java:global/ApplicationRouter-1.0/ApplicationManagerBean!pl.agh.soa.ejb.services.ApplicationManager")
+    private ApplicationManager applicationManager;
 
-    @EJB(lookup = "java:global/EjbSlotImpl-1.0/SlotManagerBean!pl.agh.soa.ejb.services.remote.SlotManagerRemote")
-    private SlotManagerRemote slotManager;
+    @Inject
+    private JMSContext context;
+
+    @Resource(lookup = "java:jboss/exported/jms/topic/ParkingSystemTopic")
+    private Topic topic;
+
+    private Long timeToPay;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void payForSlot(Integer slotId, Date dateBoughtTo, Date paymentDate, String registrationPlate) {
-        ParksData parkToBePayed = parksManager.getLatestParkForData(registrationPlate, slotId);
+        try {
+            String parksUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.PARKS_MANAGER) + "/" + slotId + "/registrations/" + registrationPlate;
+            ParksData parkToBePayed = RestClient.sendRequest(RestClient.prepareRequest(HttpGet.METHOD_NAME, parksUrl), ParksData.class);
 
-        PaymentsData payment = prepareNewPayment(dateBoughtTo, paymentDate, parkToBePayed);
-        PaymentsDAO.getInstance().addItem(payment);
+            PaymentsData payment = prepareNewPayment(dateBoughtTo, paymentDate, parkToBePayed);
+            PaymentsDAO.getInstance().addItem(payment);
 
-        ParkingSlotData slot = slotManager.getSlot(slotId);
-        slot.setStatus(ParkingSlotData.SlotStatus.PARKED);
-        slotManager.updateSlot(slot);
+            String slotUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.SLOT_MANAGER) + "/" + slotId;
+            ParkingSlotData slot = RestClient.sendRequest(RestClient.prepareRequest(HttpGet.METHOD_NAME, slotUrl), ParkingSlotData.class);
+            if (slot == null) {
+                throw new NotFoundException();
+            }
+            slot.setStatus(ParkingSlotData.SlotStatus.PARKED);
+            RestClient.sendRequest(RestClient.prepareRequest(HttpPut.METHOD_NAME, slotUrl, slot), ParkingSlotData.class);
+        } catch (Exception e) {
+            throw new EJBException(e);
+        }
     }
 
     private PaymentsData prepareNewPayment(Date dateBoughtTo, Date paymentDate, ParksData parkToBePayed) {
@@ -100,5 +121,31 @@ public class PaymentManagerBean implements PaymentManagerRemote {
     public void deleteRate(Integer hours) {
         RatesData rateToBeRemoved = RatesDAO.getInstance().getHourlyRate(hours);
         RatesDAO.getInstance().deleteItem(rateToBeRemoved);
+    }
+
+    @Override
+    public synchronized void setTimeToPay(long time) {
+        timeToPay = time;
+    }
+
+    @Override
+    public long getTimeToPay() {
+        return timeToPay;
+    }
+
+    @Override
+    public void scheduleParkPaymentCheck(ParksData parkInfo) {
+        PaymentCheckTask paymentCheckTask = new PaymentCheckTask(parkInfo, this);
+        Timer timer = new Timer();
+        timer.schedule(paymentCheckTask, timeToPay);
+    }
+
+    @Override
+    public void sendParkNotPayed(ParksData parkInfo) {
+        ParkGuardNotificationData notification = new ParkGuardNotificationData();
+        notification.setSlotId(parkInfo.getParkingSlotData().getId());
+        notification.setRegistrationPlate(parkInfo.getRegistrationPlate());
+        notification.setNotificationDate(new Date());
+        context.createProducer().send(topic, notification);
     }
 }

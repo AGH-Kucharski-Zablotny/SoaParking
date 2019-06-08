@@ -9,7 +9,7 @@ import java.util.List;
 
 public abstract class AbstractDAO<T extends AbstractDTO> {
 
-    private static final String PERSISTENCE_UNIT_NAME = "AGH-MySQL";
+    private static final String PERSISTENCE_UNIT_NAME = "Parking";
 
     protected EntityManager entityManager;
 
