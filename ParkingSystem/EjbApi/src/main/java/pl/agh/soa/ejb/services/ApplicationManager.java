@@ -12,4 +12,5 @@ public interface ApplicationManager {
 
     void registerApplication(Application applicationType, String urlWithPort);
     String getApplicationUrl(Application applicationType);
+    void unregisterApplication(Application applicationType);
 }

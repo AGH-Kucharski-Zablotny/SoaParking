@@ -15,6 +15,7 @@ import pl.agh.soa.jms.dto.ParkGuardNotificationData;
 import pl.agh.soa.rest.RestClient;
 import pl.agh.soa.tasks.PaymentCheckTask;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.inject.Inject;
@@ -30,7 +31,8 @@ import java.util.*;
 import java.util.Timer;
 
 @Remote(PaymentManagerRemote.class)
-@Stateful
+@Singleton
+@Startup
 public class PaymentManagerBean implements PaymentManagerRemote {
 
     @EJB(lookup = "java:global/ApplicationRouter-1.0/ApplicationManagerBean!pl.agh.soa.ejb.services.ApplicationManager")
@@ -42,7 +44,12 @@ public class PaymentManagerBean implements PaymentManagerRemote {
     @Resource(lookup = "java:jboss/exported/jms/topic/ParkingSystemTopic")
     private Topic topic;
 
-    private Long timeToPay;
+    private Long timeToPay = 5000L;
+
+    @PostConstruct
+    public void init() {
+        applicationManager.registerApplication(ApplicationManager.Application.PAYMENT_MANAGER, "http://localhost:8080/EjbPaymentImpl-1.0/payment");
+    }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -62,7 +69,7 @@ public class PaymentManagerBean implements PaymentManagerRemote {
             slot.setStatus(ParkingSlotData.SlotStatus.PARKED);
             RestClient.sendRequest(RestClient.prepareRequest(HttpPut.METHOD_NAME, slotUrl, slot), ParkingSlotData.class);
         } catch (Exception e) {
-            throw new EJBException(e);
+            throw new EJBException(e.getMessage());
         }
     }
 

@@ -7,6 +7,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -24,14 +25,25 @@ public class RestClient {
     }
 
     public static HttpRequestBase prepareRequest(String method, String url, Serializable entity) throws JsonProcessingException, UnsupportedEncodingException {
+        StringEntity e = new StringEntity("");
+        if (entity != null) {
+            e = new StringEntity(new ObjectMapper().writeValueAsString(entity));
+        }
+
         if (HttpGet.METHOD_NAME.equals(method)) {
             return new HttpGet(url);
         }
         if (HttpPost.METHOD_NAME.equals(method)) {
             HttpPost post = new HttpPost(url);
-            StringEntity e = new StringEntity(new ObjectMapper().writeValueAsString(entity));
             post.setEntity(e);
+            post.setHeader("Content-type", "application/json");
             return post;
+        }
+        if (HttpPut.METHOD_NAME.equals(method)) {
+            HttpPut put = new HttpPut(url);
+            put.setEntity(e);
+            put.setHeader("Content-type", "application/json");
+            return put;
         }
         return null;
     }

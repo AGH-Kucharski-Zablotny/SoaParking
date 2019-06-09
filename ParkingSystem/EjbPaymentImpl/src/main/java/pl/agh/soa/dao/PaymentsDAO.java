@@ -27,7 +27,7 @@ public class PaymentsDAO extends AbstractDAO<PaymentsData> {
     }
 
     public PaymentsData getLatestPaymentForPark(int parkId) {
-        TypedQuery<PaymentsData> query = entityManager.createQuery("SELECT data FROM PaymentsData data WHERE data.parksData.id = :parkId ORDER BY data.paymentData DESC", PaymentsData.class);
+        TypedQuery<PaymentsData> query = entityManager.createQuery("SELECT data FROM PaymentsData data WHERE data.parksData.id = :parkId ORDER BY data.paymentDate DESC", PaymentsData.class);
         query.setParameter("parkId", parkId);
         try {
             return query.getSingleResult();

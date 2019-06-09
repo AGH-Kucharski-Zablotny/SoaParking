@@ -1,5 +1,6 @@
 package pl.agh.soa.rest.endpoints;
 
+import pl.agh.soa.dto.ParksData;
 import pl.agh.soa.dto.rest.payment.PayRequest;
 import pl.agh.soa.ejb.services.PaymentManager;
 import pl.agh.soa.ejb.services.local.PaymentManagerLocal;
@@ -8,7 +9,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-@Path("/")
+@Path("/payment")
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 public class PaymentResource {
@@ -20,5 +21,11 @@ public class PaymentResource {
     @POST
     public void payForSlot(@PathParam("slotId") int slotId, PayRequest payRequest) {
         paymentManager.payForSlot(slotId, payRequest.getDateBoughtTo(), payRequest.getPaymentDate(), payRequest.getRegistrationPlate());
+    }
+
+    @Path("scheduler")
+    @POST
+    public void scheduleCheck(ParksData data) {
+        paymentManager.scheduleParkPaymentCheck(data);
     }
 }

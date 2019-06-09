@@ -27,4 +27,9 @@ public class ApplicationManagerBean implements ApplicationManager {
     public String getApplicationUrl(Application applicationType) {
         return urlsByApp.getOrDefault(applicationType, null);
     }
+
+    @Override
+    public void unregisterApplication(Application applicationType) {
+        urlsByApp.remove(applicationType);
+    }
 }

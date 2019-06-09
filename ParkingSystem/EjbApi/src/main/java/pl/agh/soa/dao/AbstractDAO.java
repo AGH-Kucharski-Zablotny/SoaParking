@@ -3,13 +3,14 @@ package pl.agh.soa.dao;
 import pl.agh.soa.dto.AbstractDTO;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
 public abstract class AbstractDAO<T extends AbstractDTO> {
 
-    private static final String PERSISTENCE_UNIT_NAME = "Parking";
+    protected static final String PERSISTENCE_UNIT_NAME = "Parking";
 
     protected EntityManager entityManager;
 
@@ -39,7 +40,6 @@ public abstract class AbstractDAO<T extends AbstractDTO> {
     public void addItem(T item) {
         try {
             entityManager.persist(item);
-            entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
         }
