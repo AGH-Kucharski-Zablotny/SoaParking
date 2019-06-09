@@ -1,9 +1,7 @@
 package pl.agh.soa.ejb.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import pl.agh.soa.dao.ParksDAO;
 import pl.agh.soa.dto.ParkingSlotData;
@@ -16,11 +14,11 @@ import pl.agh.soa.rest.RestClient;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.*;
-import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.NotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
-import java.util.concurrent.Executor;
 
 import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.EMPTY;
 import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.PARKED;
@@ -60,9 +58,6 @@ public class ParksManagerBean implements ParksManagerRemote
         try {
             String slotUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.SLOT_MANAGER) + "/" + slotId;
             ParkingSlotData parkingSlot = RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.GET, slotUrl), ParkingSlotData.class);
-//            ParkingSlotData parkingSlot = new ParkingSlotData();
-//            parkingSlot.setId(1);
-//            parkingSlot.setStatus(EMPTY);
             if(parkingSlot == null || parkingSlot.getStatus().equals(PARKED))
             {
                 throw new SlotOccupiedException();
@@ -70,9 +65,7 @@ public class ParksManagerBean implements ParksManagerRemote
             ParksData park = prepareNewPark(parkingSlot, registrationPlate, dateParked);
             ParksDAO.getInstance().addItem(park);
             parkingSlot.setStatus(PARKED);
-//            slotManager.updateSlot(parkingSlot);
             RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.PUT, slotUrl, parkingSlot), ParkingSlotData.class);
-//            paymentManager.scheduleParkPaymentCheck(park);
             String schedulerUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.PAYMENT_MANAGER) + "/scheduler";
             HttpRequestBase request = null;
             try {
@@ -88,18 +81,29 @@ public class ParksManagerBean implements ParksManagerRemote
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void releaseParkingSlot(Integer slotId, String registrationPlate)
+    public void releaseParkingSlot(Integer slotId)
     {
-//        ParksData park = parksManager.getLatestParkForData(registrationPlate, slotId);
-//        park.setDateLeft(new Date());
-//        ParksDAO.getInstance().updateItem(park);
-//        ParkingSlotData parkingSlot = slotManager.getSlot(slotId);
-//        parkingSlot.setStatus(EMPTY);
-//        slotManager.updateSlot(parkingSlot);
+        try {
+            ParksData park = getLatestParkForData(slotId);
+            if (park == null) {
+                throw new NoResultException();
+            }
+            park.setDateLeft(new Date());
+            ParksDAO.getInstance().updateItem(park);
+            String slotUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.SLOT_MANAGER) + "/" + slotId;
+            ParkingSlotData parkingSlot = RestClient.sendRequest(RestClient.prepareRequest(HttpGet.METHOD_NAME, slotUrl), ParkingSlotData.class);
+            if (parkingSlot == null) {
+                throw new NotFoundException();
+            }
+            parkingSlot.setStatus(EMPTY);
+            RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.PUT, slotUrl, parkingSlot), ParkingSlotData.class);
+        } catch (Exception e) {
+            throw new EJBException(e);
+        }
     }
 
     @Override
-    public ParksData getLatestParkForData(String registrationPlate, Integer slotId) {
-        return ParksDAO.getInstance().getLatestParkForData(registrationPlate, slotId);
+    public ParksData getLatestParkForData(Integer slotId) {
+        return ParksDAO.getInstance().getLatestParkForData(slotId);
     }
 }

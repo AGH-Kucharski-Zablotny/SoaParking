@@ -58,7 +58,6 @@ public class SlotManagerBean implements SlotManagerLocal, SlotManagerRemote
     }
 
     @Override
-//    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public ParkingSlotData getSlot(Integer slotId)
     {
         try {

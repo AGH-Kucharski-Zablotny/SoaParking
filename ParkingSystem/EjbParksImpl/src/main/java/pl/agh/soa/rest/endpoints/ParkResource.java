@@ -4,10 +4,13 @@ import org.apache.http.HttpException;
 import pl.agh.soa.dto.ParksData;
 import pl.agh.soa.ejb.services.ParksManager;
 import pl.agh.soa.exceptions.SlotOccupiedException;
+import pl.agh.soa.rest.dto.NewParkRequest;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.xml.bind.ValidationException;
 import javax.xml.registry.InvalidRequestException;
 
 @Path("/parks")
@@ -19,10 +22,9 @@ public class ParkResource {
     private ParksManager parksManager;
 
     @GET
-    @Path("/{slotId}/registrations/{registrationPlate}")
-    public ParksData getParks(@PathParam("slotId") Integer slotId,
-                                    @PathParam("registrationPlate") String registrationPlate) {
-        ParksData park = parksManager.getLatestParkForData(registrationPlate, slotId);
+    @Path("/{slotId}")
+    public ParksData getLatestPark(@PathParam("slotId") Integer slotId) {
+        ParksData park = parksManager.getLatestParkForData(slotId);
         if (park == null) {
             throw new NotFoundException();
         }
@@ -30,12 +32,18 @@ public class ParkResource {
     }
 
     @POST
-    public String newPark(ParksData data) {
+    public void newPark(NewParkRequest data) {
         try {
-            parksManager.parkFreeSlot(data.getParkingSlotData().getId(), data.getRegistrationPlate(), data.getDateParked());
+            parksManager.parkFreeSlot(data.getSlotId(), data.getRegistrationPlate(), data.getDateParked());
         } catch (SlotOccupiedException e) {
-            return "Slot is already occupied";
+            throw new ClientErrorException("Slot is already occupied", Response.Status.BAD_REQUEST);
         }
-        return "Success";
     }
+
+    @DELETE
+    @Path("slot/{slotId}")
+    public void releaseSlot(@PathParam("slotId") Integer slotId) {
+        parksManager.releaseParkingSlot(slotId);
+    }
+
 }

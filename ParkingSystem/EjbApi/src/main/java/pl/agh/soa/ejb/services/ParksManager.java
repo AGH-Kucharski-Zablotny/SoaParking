@@ -7,7 +7,7 @@ import java.util.Date;
 
 public interface ParksManager
 {
-    ParksData getLatestParkForData(String registrationPlate, Integer slotId);
+    ParksData getLatestParkForData(Integer slotId);
     void parkFreeSlot(Integer slotId, String registrationPlate, Date dateParked) throws SlotOccupiedException;
-    void releaseParkingSlot(Integer slotId, String registrationPlate);
+    void releaseParkingSlot(Integer slotId);
 }
