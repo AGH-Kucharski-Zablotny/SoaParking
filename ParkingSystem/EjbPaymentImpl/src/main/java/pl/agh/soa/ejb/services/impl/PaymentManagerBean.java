@@ -31,6 +31,7 @@ import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.Timer;
+import java.util.stream.Collectors;
 
 @Remote(PaymentManagerRemote.class)
 @Singleton
@@ -110,16 +111,11 @@ public class PaymentManagerBean implements PaymentManagerRemote {
     @Override
     public Float getPriceForHours(Long hours) throws NoResultException {
         List<RatesData> rates = RatesDAO.getInstance().getItems();
-        RatesData rateSuitableForHours = rates.stream().min(compareByHoursDifference(hours)).get();
-        return rateSuitableForHours.getAmount();
-    }
-
-    private Comparator<RatesData> compareByHoursDifference(Long hours) {
-        return (r1, r2) -> {
-            float diffR1 = Math.abs(r1.getHours() - hours);
-            float diffR2 = Math.abs(r2.getHours() - hours);
-            return Float.compare(diffR1, diffR2);
-        };
+        List<RatesData> ratesSuitableForHours = rates.stream().filter(r -> r.getHours() <= hours).collect(Collectors.toList());
+        if (ratesSuitableForHours.size() == 0) {
+            return 0F;
+        }
+        return ratesSuitableForHours.get(ratesSuitableForHours.size() - 1).getAmount();
     }
 
     @Override
