@@ -1,6 +1,8 @@
 package pl.agh.soa.dto;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.Date;
 
 @Entity
 @Table(name = "ParkingSlots")
@@ -23,6 +25,10 @@ public class ParkingSlotData extends AbstractDTO
     @Column(name = "Status", nullable = false)
     private String status;
 
+    @Column(name = "DateRemoved")
+    @XmlTransient
+    private Date dateRemoved;
+
     public int getId()
     {
         return id;
@@ -41,5 +47,13 @@ public class ParkingSlotData extends AbstractDTO
     public void setStatus(String status)
     {
         this.status = status;
+    }
+
+    public Date getDateRemoved() {
+        return dateRemoved;
+    }
+
+    public void setDateRemoved(Date dateRemoved) {
+        this.dateRemoved = dateRemoved;
     }
 }

@@ -2,12 +2,12 @@ package pl.agh.soa.dao;
 
 import pl.agh.soa.dto.ParkingSlotData;
 
-import javax.persistence.LockModeType;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.transaction.Transactional;
+import java.util.Date;
+import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 public class ParkingSlotDAO extends AbstractDAO<ParkingSlotData> {
 
@@ -29,32 +29,20 @@ public class ParkingSlotDAO extends AbstractDAO<ParkingSlotData> {
     }
 
     @Override
-    public void updateItem(ParkingSlotData item) {
-//        ParkingSlotData entity = entityManager.find(ParkingSlotData.class, item.getId());
-//        if (!entityManager.getTransaction().isActive()) {
-//            entityManager.getTransaction().begin();
-//        }
-//        entity.setStatus(item.getStatus());
-//        entityManager.lock(entity, LockModeType.PESSIMISTIC_WRITE);
-//        entityManager.getTransaction().commit();
+    public List<ParkingSlotData> getItems() {
+        return super.getItems().stream().filter(s -> s.getDateRemoved() == null).collect(Collectors.toList());
+    }
 
-//        if (entityManager.getTransaction().isActive()) {
-//            entityManager.flush();
-//            entityManager.clear();
-//        }
-//
-//        entityManager.close();
-//        entityManager = Persistence
-//                .createEntityManagerFactory(PERSISTENCE_UNIT_NAME)
-//                .createEntityManager();
+    @Override
+    public ParkingSlotData getItem(Integer itemId) {
+        TypedQuery query = entityManager.createQuery("SELECT c FROM ParkingSlotData c WHERE c.id = :id AND c.dateRemoved IS NULL", ParkingSlotData.class);
+        query.setParameter("id", itemId);
+        return (ParkingSlotData) query.getSingleResult();
+    }
 
-//        entityManager.getTransaction().begin();
-//        ParkingSlotData entity = entityManager.find(ParkingSlotData.class, item.getId());
-//        Query q = entityManager.createQuery("UPDATE ParkingSlotData data SET data.status = :status where data.id = :id");
-//        q.setParameter("status", item.getStatus());
-//        q.setParameter("id", entity.getId());
-//        q.executeUpdate();
-//        entityManager.getTransaction().commit();
-        super.updateItem(item);
+    @Override
+    public void deleteItem(ParkingSlotData item) {
+        item.setDateRemoved(new Date());
+        updateItem(item);
     }
 }
