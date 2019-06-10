@@ -2,8 +2,10 @@ package pl.agh.soa.rest.endpoints;
 
 import pl.agh.soa.dto.PaymentsData;
 import pl.agh.soa.ejb.services.remote.PaymentManagerRemote;
+import pl.agh.soa.rest.dto.CreatePaymentRequest;
 
 import javax.ejb.EJB;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -11,20 +13,20 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.util.Date;
 
+@Path("/payment")
 public class ParkingMeterEndpoint
 {
-    @EJB(lookup = "java:global/EjbParksImpl-1.0/PaymentMenagerRemote!pl.agh.soa.ejb.services.remote.PaymentManagerRemote")
+    @EJB(lookup = "java:global/EjbPaymentImpl-1.0/PaymentManagerBean!pl.agh.soa.ejb.services.remote.PaymentManagerRemote")
     private PaymentManagerRemote paymentManager;
 
     @POST
     @Produces("application/json")
     @Consumes("application/json")
-    @Path("/payment")
-    public Response createPayment(PaymentsData payment, Integer slotId)
+    public Response createPayment(@Valid CreatePaymentRequest paymentRequest)
     {
         try
         {
-            paymentManager.payForSlot(slotId, payment.getDateBoughtTo(), new Date(), payment.getParksData().getRegistrationPlate());
+            paymentManager.payForSlot(paymentRequest.getDateBoughtTo(), paymentRequest.getPaymentDate(), paymentRequest.getRegistrationPlate());
         }
         catch(NullPointerException e)
         {

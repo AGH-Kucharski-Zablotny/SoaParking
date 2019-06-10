@@ -34,10 +34,10 @@ public class SlotsResource {
 
     @PUT
     @Path("/{id}")
-    public void updateSlot(@PathParam("id") Integer slotId, String status) {
-        ParkingSlotData slotData = new ParkingSlotData();
-        slotData.setId(slotId);
-        slotData.setStatus(status);
-        slotManager.updateSlot(slotData);
+    public void updateSlot(@PathParam("id") Integer slotId, ParkingSlotData data) {
+        if (slotId != data.getId()) {
+            throw new BadRequestException();
+        }
+        slotManager.updateSlot(data);
     }
 }

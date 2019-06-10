@@ -64,7 +64,7 @@ public class ParksManagerBean implements ParksManagerRemote
             }
             ParksData park = prepareNewPark(parkingSlot, registrationPlate, dateParked);
             ParksDAO.getInstance().addItem(park);
-            parkingSlot.setStatus(PARKED);
+            parkingSlot.setStatus(ParkingSlotData.SlotStatus.TAKEN);
             RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.PUT, slotUrl, parkingSlot), ParkingSlotData.class);
             String schedulerUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.PAYMENT_MANAGER) + "/scheduler";
             HttpRequestBase request = null;
@@ -105,5 +105,10 @@ public class ParksManagerBean implements ParksManagerRemote
     @Override
     public ParksData getLatestParkForData(Integer slotId) {
         return ParksDAO.getInstance().getLatestParkForData(slotId);
+    }
+
+    @Override
+    public ParksData getLatestParkForData(String registrationPlate) {
+        return ParksDAO.getInstance().getLatestParkForData(registrationPlate);
     }
 }

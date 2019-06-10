@@ -22,9 +22,19 @@ public class ParkResource {
     private ParksManager parksManager;
 
     @GET
-    @Path("/{slotId}")
+    @Path("slot/{slotId}")
     public ParksData getLatestPark(@PathParam("slotId") Integer slotId) {
         ParksData park = parksManager.getLatestParkForData(slotId);
+        if (park == null) {
+            throw new NotFoundException();
+        }
+        return park;
+    }
+
+    @GET
+    @Path("registration/{registrationPlate}")
+    public ParksData getLatestParkForRegistration(@PathParam("registrationPlate") String registrationPlate) {
+        ParksData park = parksManager.getLatestParkForData(registrationPlate);
         if (park == null) {
             throw new NotFoundException();
         }

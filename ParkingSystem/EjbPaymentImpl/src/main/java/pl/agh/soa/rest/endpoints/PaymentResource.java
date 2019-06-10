@@ -1,6 +1,7 @@
 package pl.agh.soa.rest.endpoints;
 
 import pl.agh.soa.dto.ParksData;
+import pl.agh.soa.dto.RatesData;
 import pl.agh.soa.dto.rest.payment.PayRequest;
 import pl.agh.soa.ejb.services.PaymentManager;
 import pl.agh.soa.ejb.services.local.PaymentManagerLocal;
@@ -20,12 +21,18 @@ public class PaymentResource {
     @Path("slots/{slotId}")
     @POST
     public void payForSlot(@PathParam("slotId") int slotId, PayRequest payRequest) {
-        paymentManager.payForSlot(slotId, payRequest.getDateBoughtTo(), payRequest.getPaymentDate(), payRequest.getRegistrationPlate());
+        paymentManager.payForSlot(payRequest.getDateBoughtTo(), payRequest.getPaymentDate(), payRequest.getRegistrationPlate());
     }
 
     @Path("scheduler")
     @POST
     public void scheduleCheck(ParksData data) {
         paymentManager.scheduleParkPaymentCheck(data);
+    }
+
+    @POST
+    @Path("rates")
+    public void addValuationRate(RatesData data) {
+        paymentManager.setRate(data.getAmount(), data.getHours());
     }
 }

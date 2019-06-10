@@ -1,5 +1,6 @@
 package pl.agh.soa.ejb.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -24,6 +25,7 @@ import javax.jms.Topic;
 import javax.persistence.NoResultException;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.NotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
@@ -53,23 +55,26 @@ public class PaymentManagerBean implements PaymentManagerRemote {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void payForSlot(Integer slotId, Date dateBoughtTo, Date paymentDate, String registrationPlate) {
+    public void payForSlot(Date dateBoughtTo, Date paymentDate, String registrationPlate) {
         try {
-            String parksUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.PARKS_MANAGER) + "/" + slotId + "/registrations/" + registrationPlate;
+            String parksUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.PARKS_MANAGER) + "/registration/" + registrationPlate;
             ParksData parkToBePayed = RestClient.sendRequest(RestClient.prepareRequest(HttpGet.METHOD_NAME, parksUrl), ParksData.class);
+            if (parkToBePayed == null) {
+                throw new NotFoundException();
+            }
 
             PaymentsData payment = prepareNewPayment(dateBoughtTo, paymentDate, parkToBePayed);
             PaymentsDAO.getInstance().addItem(payment);
 
-            String slotUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.SLOT_MANAGER) + "/" + slotId;
+            String slotUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.SLOT_MANAGER) + "/" + parkToBePayed.getParkingSlotData().getId();
             ParkingSlotData slot = RestClient.sendRequest(RestClient.prepareRequest(HttpGet.METHOD_NAME, slotUrl), ParkingSlotData.class);
             if (slot == null) {
                 throw new NotFoundException();
             }
             slot.setStatus(ParkingSlotData.SlotStatus.PARKED);
             RestClient.sendRequest(RestClient.prepareRequest(HttpPut.METHOD_NAME, slotUrl, slot), ParkingSlotData.class);
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
+        } catch (UnsupportedEncodingException | JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
 
@@ -111,8 +116,8 @@ public class PaymentManagerBean implements PaymentManagerRemote {
 
     private Comparator<RatesData> compareByHoursDifference(Long hours) {
         return (r1, r2) -> {
-            float diffR1 = Math.abs(r1.getAmount() - hours);
-            float diffR2 = Math.abs(r2.getAmount() - hours);
+            float diffR1 = Math.abs(r1.getHours() - hours);
+            float diffR2 = Math.abs(r2.getHours() - hours);
             return Float.compare(diffR1, diffR2);
         };
     }

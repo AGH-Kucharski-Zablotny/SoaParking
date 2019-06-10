@@ -30,8 +30,21 @@ public class ParksDAO extends AbstractDAO<ParksData> {
                 entityManager.createQuery("SELECT data FROM ParksData data WHERE data.dateLeft IS NULL AND " +
                         "data.parkingSlotData.id = :slotId " +
                         "ORDER BY data.dateParked DESC", ParksData.class);
-//        query.setParameter("registrationPlate", registrationPlate);
         query.setParameter("slotId", slotId);
+        query.setMaxResults(1);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public ParksData getLatestParkForData(String registrationPlate) {
+        TypedQuery<ParksData> query =
+                entityManager.createQuery("SELECT data FROM ParksData data WHERE data.dateLeft IS NULL AND " +
+                        "data.registrationPlate = :registrationPlate " +
+                        "ORDER BY data.dateParked DESC", ParksData.class);
+        query.setParameter("registrationPlate", registrationPlate);
         query.setMaxResults(1);
         try {
             return query.getSingleResult();

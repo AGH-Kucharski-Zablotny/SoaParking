@@ -13,7 +13,7 @@ import java.util.Date;
 @Path("/slotvaluation")
 public class SlotValuationEndpoint
 {
-    @EJB(lookup = "java:global/EjbParksImpl-1.0/PaymentMenagerRemote!pl.agh.soa.ejb.services.remote.PaymentManagerRemote")
+    @EJB(lookup = "java:global/EjbPaymentImpl-1.0/PaymentManagerBean!pl.agh.soa.ejb.services.remote.PaymentManagerRemote")
     private PaymentManagerRemote paymentManager;
 
     @GET
