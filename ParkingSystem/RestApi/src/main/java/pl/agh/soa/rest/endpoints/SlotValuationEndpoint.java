@@ -2,6 +2,7 @@ package pl.agh.soa.rest.endpoints;
 
 import pl.agh.soa.ejb.services.remote.PaymentManagerRemote;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -11,6 +12,7 @@ import javax.ws.rs.core.Response;
 import java.util.Date;
 
 @Path("/slotvaluation")
+@RolesAllowed({"ADMIN", "EMPLOYEE"})
 public class SlotValuationEndpoint
 {
     @EJB(lookup = "java:global/EjbPaymentImpl-1.0/PaymentManagerBean!pl.agh.soa.ejb.services.remote.PaymentManagerRemote")
