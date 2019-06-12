@@ -25,6 +25,9 @@ public class ParkingSlotData extends AbstractDTO
     @Column(name = "Status", nullable = false)
     private String status;
 
+    @Column(name = "Region", nullable = false)
+    private int region;
+
     @Column(name = "DateRemoved")
     @XmlTransient
     private Date dateRemoved;
@@ -47,6 +50,16 @@ public class ParkingSlotData extends AbstractDTO
     public void setStatus(String status)
     {
         this.status = status;
+    }
+
+    public int getRegion()
+    {
+        return region;
+    }
+
+    public void setRegion(int region)
+    {
+        this.region = region;
     }
 
     public Date getDateRemoved() {
