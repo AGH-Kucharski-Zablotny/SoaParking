@@ -7,6 +7,11 @@ import javax.persistence.*;
 @Access(AccessType.FIELD)
 public class UserData extends AbstractDTO
 {
+    public interface Roles {
+        String ADMIN = "ADMIN";
+        String EMPLOYEE = "EMPLOYEE";
+    }
+
     @Id
     @GeneratedValue
     @Column(name = "Id", nullable = false)

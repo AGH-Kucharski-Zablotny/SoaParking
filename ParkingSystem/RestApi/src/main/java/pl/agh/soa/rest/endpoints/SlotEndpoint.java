@@ -1,6 +1,7 @@
 package pl.agh.soa.rest.endpoints;
 
 import pl.agh.soa.dto.ParkingSlotData;
+import pl.agh.soa.dto.UserData;
 import pl.agh.soa.ejb.services.remote.SlotManagerRemote;
 
 import javax.annotation.security.RolesAllowed;
@@ -9,7 +10,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 @Path("/slots")
-@RolesAllowed({"ADMIN", "EMPLOYEE"})
+@RolesAllowed({UserData.Roles.ADMIN, UserData.Roles.EMPLOYEE})
 public class SlotEndpoint
 {
     @EJB(lookup = "java:global/EjbSlotImpl-1.0/SlotManagerBean!pl.agh.soa.ejb.services.remote.SlotManagerRemote")

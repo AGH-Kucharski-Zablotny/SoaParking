@@ -1,6 +1,7 @@
 package pl.agh.soa.rest.endpoints;
 
 import pl.agh.soa.dto.PaymentsData;
+import pl.agh.soa.dto.UserData;
 import pl.agh.soa.ejb.services.remote.PaymentManagerRemote;
 import pl.agh.soa.rest.dto.CreatePaymentRequest;
 
@@ -14,7 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 @Path("/payment")
-@RolesAllowed("ADMIN")
+@RolesAllowed(UserData.Roles.ADMIN)
 public class ParkingMeterEndpoint
 {
     @EJB(lookup = "java:global/EjbPaymentImpl-1.0/PaymentManagerBean!pl.agh.soa.ejb.services.remote.PaymentManagerRemote")
