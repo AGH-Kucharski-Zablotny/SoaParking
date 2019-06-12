@@ -74,6 +74,8 @@ public class PaymentManagerBean implements PaymentManagerRemote {
             }
             slot.setStatus(ParkingSlotData.SlotStatus.PARKED);
             RestClient.sendRequest(RestClient.prepareRequest(HttpPut.METHOD_NAME, slotUrl, slot), ParkingSlotData.class);
+            scheduleOverdueCheck(parkToBePayed, payment);
+
         } catch (UnsupportedEncodingException | JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -155,5 +157,18 @@ public class PaymentManagerBean implements PaymentManagerRemote {
         notification.setRegistrationPlate(parkInfo.getRegistrationPlate());
         notification.setNotificationDate(new Date());
         context.createProducer().send(topic, notification);
+    }
+
+    @Override
+    public Date getDateParkedTo(Integer parkId) {
+        return PaymentsDAO.getInstance().getLatestPaymentForPark(parkId).getDateBoughtTo();
+    }
+
+    private void scheduleOverdueCheck(ParksData parkInfo, PaymentsData paymentsData) {
+        PaymentCheckTask paymentCheckTask = new PaymentCheckTask(parkInfo, this);
+        Timer timer = new Timer();
+        Date currentDate = new Date();
+        long checkOffset = paymentsData.getDateBoughtTo().getTime() - currentDate.getTime() + timeToPay;
+        timer.schedule(paymentCheckTask, checkOffset);
     }
 }

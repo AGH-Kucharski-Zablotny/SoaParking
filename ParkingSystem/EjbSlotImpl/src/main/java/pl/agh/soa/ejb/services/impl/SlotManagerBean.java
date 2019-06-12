@@ -6,6 +6,7 @@ import pl.agh.soa.dto.ParksData;
 import pl.agh.soa.ejb.services.ApplicationManager;
 import pl.agh.soa.ejb.services.local.SlotManagerLocal;
 import pl.agh.soa.ejb.services.remote.SlotManagerRemote;
+import pl.agh.soa.exceptions.SlotOccupiedException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -76,16 +77,24 @@ public class SlotManagerBean implements SlotManagerLocal, SlotManagerRemote
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void deleteSlot(ParkingSlotData slot)
-    {
-        ParkingSlotDAO.getInstance().deleteItem(slot);
+    public void deleteSlot(ParkingSlotData slot) throws SlotOccupiedException {
+        if (!slot.getStatus().equals(EMPTY)) {
+            ParkingSlotDAO.getInstance().deleteItem(slot);
+        }
+        else {
+            throw new SlotOccupiedException();
+        }
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void deleteSlot(Integer slotId)
-    {
-        ParkingSlotDAO.getInstance().deleteItem(slotId);
+    public void deleteSlot(Integer slotId) throws SlotOccupiedException {
+        if (!ParkingSlotDAO.getInstance().getItem(slotId).getStatus().equals(EMPTY)) {
+            ParkingSlotDAO.getInstance().deleteItem(slotId);
+        }
+        else {
+            throw new SlotOccupiedException();
+        }
     }
 
     @Override

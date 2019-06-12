@@ -7,6 +7,8 @@ import pl.agh.soa.ejb.services.remote.AccountManagerRemote;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Remote(AccountManagerRemote.class)
 @Stateless
@@ -28,6 +30,11 @@ public class AccountManagerBean implements AccountManagerRemote {
     @Override
     public void createUser(UserData user) {
         UsersDAO.getInstance().addItem(user);
+    }
+
+    @Override
+    public List<UserData> getAttendants() {
+        return UsersDAO.getInstance().getItems().stream().filter(u -> u.getRegion() != null).collect(Collectors.toList());
     }
 
     @Override

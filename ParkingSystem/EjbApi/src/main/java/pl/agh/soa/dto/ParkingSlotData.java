@@ -14,7 +14,7 @@ public class ParkingSlotData extends AbstractDTO
         String EMPTY = "E";
         String TAKEN = "T";
         String PARKED = "P";
-        String OVERDUED = "O";
+        String OVERDUE = "O";
     }
 
     @Id

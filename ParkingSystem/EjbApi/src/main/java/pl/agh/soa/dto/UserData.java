@@ -28,7 +28,7 @@ public class UserData extends AbstractDTO
     private String role;
 
     @Column(name = "Region")
-    private int region;
+    private Integer region;
 
     public int getId()
     {
@@ -90,12 +90,12 @@ public class UserData extends AbstractDTO
         this.role = role;
     }
 
-    public int getRegion()
+    public Integer getRegion()
     {
         return region;
     }
 
-    public void setRegion(int region)
+    public void setRegion(Integer region)
     {
         this.region = region;
     }

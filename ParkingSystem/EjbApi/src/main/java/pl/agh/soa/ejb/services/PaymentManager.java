@@ -14,4 +14,5 @@ public interface PaymentManager {
     long getTimeToPay();
     void scheduleParkPaymentCheck(ParksData parkInfo);
     void sendParkNotPayed(ParksData parkInfo);
+    Date getDateParkedTo(Integer parkId);
 }

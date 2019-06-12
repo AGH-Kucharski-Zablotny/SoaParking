@@ -21,8 +21,12 @@ public class PaymentCheckTask extends TimerTask {
     @Override
     public void run() {
         PaymentsData paymentForPark = PaymentsDAO.getInstance().getLatestPaymentForPark(parksData.getId());
-        if (paymentForPark == null) {
+        if (paymentForPark == null || hasBoughtTimePassed(paymentForPark)) {
             paymentManagerBean.sendParkNotPayed(parksData);
         }
+    }
+
+    private boolean hasBoughtTimePassed(PaymentsData paymentForPark) {
+        return new Date().after(paymentForPark.getDateBoughtTo());
     }
 }
