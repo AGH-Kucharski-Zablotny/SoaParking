@@ -20,9 +20,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.inject.Inject;
-import javax.jms.JMSContext;
-import javax.jms.Topic;
+import javax.jms.*;
 import javax.persistence.NoResultException;
+import javax.transaction.Transactional;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.NotFoundException;
 import java.io.UnsupportedEncodingException;
@@ -156,7 +156,12 @@ public class PaymentManagerBean implements PaymentManagerRemote {
         notification.setSlotId(parkInfo.getParkingSlotData().getId());
         notification.setRegistrationPlate(parkInfo.getRegistrationPlate());
         notification.setNotificationDate(new Date());
-        context.createProducer().send(topic, notification);
+//        context.createProducer().send(topic, notification);
+        try {
+            RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.POST, "http://localhost:8080/Dashboard-1.0/jmsNotification", notification), null);
+        } catch (JsonProcessingException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

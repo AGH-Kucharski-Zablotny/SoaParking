@@ -7,6 +7,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <h:head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"></link>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </h:head>
 <h:body>
     <div class="container">
@@ -17,35 +18,40 @@
             </div>
         </div>
 
-        <div id="slotDashboard">
-            <h3>Slots dashboard</h3>
-            <h:dataTable value="#{SlotController.items}" var="slot" styleClass="table table-striped">
-                <h:column>
-                    <f:facet name="header"><b>Id</b></f:facet>
-                    <h:outputLabel value="#{slot.id}" />
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Status</f:facet>
-                    <h:outputLabel value="#{SlotController.mapStatus(slot.status)}" />
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Registration Plate</f:facet>
-                    <h:outputLabel value="#{ParksController.getParksDataForSlot(slot.id).registrationPlate}"/>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Date parked</f:facet>
-                    <h:outputLabel value="#{ParksController.getParksDataForSlot(slot.id).dateParked}"/>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Date park bought to</f:facet>
-                    <h:outputLabel value="#{PaymentController.getPaymentForPark(ParksController.getParksDataForSlot(slot.id).id)}"/>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Alert</f:facet>
-                    <!-- TBA -->
-                </h:column>
-            </h:dataTable>
-        </div>
+        <h:form>
+            <div id="slotDashboard">
+                <h3>Slots dashboard</h3>
+                <h:dataTable value="#{SlotController.items}" var="slot" styleClass="table table-striped">
+                    <h:column>
+                        <f:facet name="header"><b>Id</b></f:facet>
+                        <h:outputLabel value="#{slot.id}" />
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Status</f:facet>
+                        <h:outputLabel value="#{SlotController.mapStatus(slot.status)}" />
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Registration Plate</f:facet>
+                        <h:outputLabel value="#{slot.status != 'E' ? ParksController.getParksDataForSlot(slot.id).registrationPlate : ''}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Date parked</f:facet>
+                        <h:outputLabel value="#{slot.status != 'E' ? ParksController.getParksDataForSlot(slot.id).dateParked : ''}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Date park bought to</f:facet>
+                        <h:outputLabel value="#{slot.status != 'E' ? PaymentController.getPaymentForPark(ParksController.getParksDataForSlot(slot.id).id) : ''}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Alert</f:facet>
+                        <h:outputLabel value="#{SlotNotificationController.getNotificationForSlot(slot.id).registrationPlate != null and slot.status != 'E' ? 'Not payed' : ''}"/>
+                    </h:column>
+                </h:dataTable>
+            </div>
+            <h:commandButton value="refresh" id="slotsDashboardRefresh" style="display: none">
+                <f:ajax render="@form"/>
+            </h:commandButton>
+        </h:form>
 
         <div id="attendantDashboard">
             <h:dataTable value="#{UserController.attendants}" var="attendant" styleClass="table table-striped">
@@ -67,6 +73,21 @@
                 </h:column>
             </h:dataTable>
         </div>
+
+        Long Polling result:
+        <div id="longPollingResult"></div>;
+        <script type="text/javascript">
+            function long_poll() {
+                var req = new XMLHttpRequest();
+                req.open('GET', 'pushPoll');
+                req.onreadystatechange = function () {
+                    document.getElementById('slotsDashboardRefresh').click();
+                    long_poll();
+                };
+                req.send();
+            }
+            long_poll();
+        </script>
     </div>
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js" ></script>

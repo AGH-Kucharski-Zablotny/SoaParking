@@ -57,7 +57,7 @@ public class RestClient {
                     throw new NotFoundException();
                 }
             }
-            if (response.getEntity() == null) {
+            if (response.getEntity() == null || resultClass == null) {
                 return null;
             }
             ObjectMapper objectMapper = new ObjectMapper();
