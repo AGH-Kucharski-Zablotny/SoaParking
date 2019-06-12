@@ -16,6 +16,9 @@ public class PaymentController implements Serializable {
     private PaymentManagerRemote paymentManager;
 
     public Date getPaymentForPark(Integer parkId) {
+        if (parkId == null || parkId == 0) {
+            return null;
+        }
         return paymentManager.getDateParkedTo(parkId);
     }
 }

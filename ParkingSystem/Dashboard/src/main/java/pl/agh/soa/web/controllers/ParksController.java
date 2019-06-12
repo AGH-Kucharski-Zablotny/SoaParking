@@ -15,6 +15,7 @@ public class ParksController implements Serializable {
     private ParksManagerRemote parksManager;
 
     public ParksData getParksDataForSlot(Integer slotId) {
-        return parksManager.getLatestParkForData(slotId);
+        ParksData park = parksManager.getLatestParkForData(slotId);
+        return park != null ? park : new ParksData();
     }
 }

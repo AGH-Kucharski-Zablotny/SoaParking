@@ -161,7 +161,11 @@ public class PaymentManagerBean implements PaymentManagerRemote {
 
     @Override
     public Date getDateParkedTo(Integer parkId) {
-        return PaymentsDAO.getInstance().getLatestPaymentForPark(parkId).getDateBoughtTo();
+        PaymentsData payment = PaymentsDAO.getInstance().getLatestPaymentForPark(parkId);
+        if (payment == null) {
+            return null;
+        }
+        return payment.getDateBoughtTo();
     }
 
     private void scheduleOverdueCheck(ParksData parkInfo, PaymentsData paymentsData) {
