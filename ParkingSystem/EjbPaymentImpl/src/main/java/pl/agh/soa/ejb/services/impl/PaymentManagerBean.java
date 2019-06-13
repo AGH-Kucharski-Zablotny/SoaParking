@@ -188,4 +188,9 @@ public class PaymentManagerBean implements PaymentManagerRemote {
         long checkOffset = paymentsData.getDateBoughtTo().getTime() - currentDate.getTime() + timeToPay;
         timer.schedule(paymentCheckTask, checkOffset);
     }
+
+    @Override
+    public List<RatesData> getRates() {
+        return RatesDAO.getInstance().getItems();
+    }
 }

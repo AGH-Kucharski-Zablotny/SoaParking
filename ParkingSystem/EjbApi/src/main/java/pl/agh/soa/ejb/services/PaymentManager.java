@@ -1,8 +1,10 @@
 package pl.agh.soa.ejb.services;
 
 import pl.agh.soa.dto.ParksData;
+import pl.agh.soa.dto.RatesData;
 
 import java.util.Date;
+import java.util.List;
 
 public interface PaymentManager {
     void payForSlot(Date dateBoughtTo, Date paymentDate, String registrationPlate);
@@ -15,4 +17,5 @@ public interface PaymentManager {
     void scheduleParkPaymentCheck(ParksData parkInfo);
     void sendParkNotPayed(ParksData parkInfo);
     Date getDateParkedTo(Integer parkId);
+    List<RatesData> getRates();
 }
