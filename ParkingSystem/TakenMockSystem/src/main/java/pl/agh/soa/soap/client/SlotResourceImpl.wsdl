@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.soap.soa.agh.pl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.soap.soa.agh.pl/" name="SlotResourceImplService" targetNamespace="http://impl.ws.soap.soa.agh.pl/">
+  <wsdl:import location="http://localhost:8080/SoapApi-1.0/SlotResourceImpl?wsdl=SlotResource.wsdl" namespace="http://ws.soap.soa.agh.pl/">
+    </wsdl:import>
+  <wsdl:binding name="SlotResourceImplServiceSoapBinding" type="ns1:SlotResource">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="releaseParkingSlot">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="releaseParkingSlot">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="releaseParkingSlotResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="takeParkingSlot">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="takeParkingSlot">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="takeParkingSlotResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="SlotOccupiedException">
+        <soap:fault name="SlotOccupiedException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SlotResourceImplService">
+    <wsdl:port binding="tns:SlotResourceImplServiceSoapBinding" name="SlotResourceImplPort">
+      <soap:address location="http://localhost:8080/SoapApi-1.0/SlotResourceImpl"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

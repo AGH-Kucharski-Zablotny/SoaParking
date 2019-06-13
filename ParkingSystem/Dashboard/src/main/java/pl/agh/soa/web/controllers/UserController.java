@@ -8,6 +8,7 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 @Named("UserController")
@@ -55,5 +56,13 @@ public class UserController implements Serializable {
         userToBeAdded.setRole(UserData.Roles.EMPLOYEE);
         accountManager.createUser(userToBeAdded);
         userToBeAdded = new UserData();
+    }
+
+    public List<String> listRoles() {
+        return Arrays.asList(UserData.Roles.ADMIN, UserData.Roles.EMPLOYEE);
+    }
+
+    public void updateUser() {
+        accountManager.updateUser(user);
     }
 }
