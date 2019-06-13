@@ -7,6 +7,7 @@ import pl.agh.soa.ejb.services.remote.AccountManagerRemote;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.xml.registry.infomodel.User;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,19 @@ public class AccountManagerBean implements AccountManagerRemote {
         try {
             return UsersDAO.getInstance().getItem(id);
         } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public UserData getUserByUsernamePassword(String username, String password)
+    {
+        try
+        {
+            return UsersDAO.getInstance().getUserByLoginPassword(username, password);
+        }
+        catch (NoResultException e)
+        {
             return null;
         }
     }
@@ -41,4 +55,5 @@ public class AccountManagerBean implements AccountManagerRemote {
     public void deleteUser(Integer id) {
         UsersDAO.getInstance().deleteItem(id);
     }
+
 }
