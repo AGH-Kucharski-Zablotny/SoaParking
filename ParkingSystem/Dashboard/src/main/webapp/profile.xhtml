@@ -40,7 +40,7 @@
                     <f:selectItems value="#{UserController.listRoles()}"/>
                 </h:selectOneMenu>
             </div>
-            <h:commandButton value="Save changes" styleClass="btn btn-primary" action="dashboard.xhtml">
+            <h:commandButton value="Save changes" styleClass="btn btn-primary" action="dashboard">
                 <f:ajax execute="@form" listener="#{UserController.updateUser()}" />
             </h:commandButton>
         </h:form>

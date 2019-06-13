@@ -56,10 +56,10 @@
                 <f:ajax render="@form"/>
             </h:commandButton>
         </h:form>
-<br/>
-        <hr/>
-        <br/>
         <h:form id="attendantDashboard" rendered="#{UserController.isUserAdmin()}">
+            <br/>
+            <hr/>
+            <br/>
             <div>
                 <div class="row">
                     <h3 class="col-sm-10">Employees dashboard</h3>
@@ -91,6 +91,33 @@
             <h:commandButton value="refresh" id="refreshAttendants" style="display: none">
                 <f:ajax render="@form"/>
             </h:commandButton>
+        </h:form>
+
+        <h:form id="parkingRatesSetForm" rendered="#{UserController.userAdmin}">
+            <br/>
+            <hr/>
+            <br/>
+            <h3>Park payment rate</h3>
+
+            <h:commandButton styleClass="btn btn-primary" value="Edit rates" rendered="#{not PaymentController.editable}">
+                <f:ajax listener="#{PaymentController.setEditable(true)}" render="@form"/>
+            </h:commandButton>
+            <h:commandButton styleClass="btn btn-success" value="Save" rendered="#{PaymentController.editable}">
+                <f:ajax execute="@form" listener="#{PaymentController.updateRates()}" render="@form"/>
+            </h:commandButton>
+
+            <h:dataTable value="#{PaymentController.rates}" var="rate" styleClass="table table-striped">
+                <h:column>
+                    <f:facet name="header">Minimal amount of hours</f:facet>
+                    <h:outputLabel value="#{rate.hours}" rendered="#{not PaymentController.editable}"/>
+                    <h:inputText value="#{rate.hours}" rendered="#{PaymentController.editable}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Cost</f:facet>
+                    <h:outputLabel value="#{rate.amount}" rendered="#{not PaymentController.editable}"/>
+                    <h:inputText value="#{rate.amount}"  rendered="#{PaymentController.editable}"/>
+                </h:column>
+            </h:dataTable>
         </h:form>
 
         <script type="text/javascript">
