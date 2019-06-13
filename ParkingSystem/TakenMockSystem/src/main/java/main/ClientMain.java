@@ -19,37 +19,40 @@ public class ClientMain
         SlotResourceImplService slotResource = new SlotResourceImplService();
         System.out.println("Create Web Service..");
         SlotResource slot = slotResource.getSlotResourceImplPort();
-        System.out.println("Type SlotID..");
-        int slotID = scanner.nextInt();
-        System.out.println("Type Registration Plate Number..");
-        String registrationPlate = scanner.next();
-
-        System.out.println("To take a Parking Slot type: 1");
-        System.out.println("To release a Parking Slot type: 2");
-        System.out.println("To exit type: 3");
         int option = 0;
         boolean isParked = false;
 
         while(option != 3)
         {
+            System.out.println("Type SlotID..");
+            int slotID = scanner.nextInt();
+            System.out.println("Type Registration Plate Number..");
+            String registrationPlate = scanner.next();
+
+            System.out.println("To take a Parking Slot type: 1");
+            System.out.println("To release a Parking Slot type: 2");
+            System.out.println("To exit type: 3");
+
             option = scanner.nextInt();
 
-            if(option == 1)
+            if (option == 1)
             {
                 System.out.println("Taking Parking Slot..");
                 slot.takeParkingSlot(slotID, registrationPlate);
                 isParked = true;
             }
-            else if(option == 2 && isParked)
+            else if (option == 2 && isParked)
             {
                 System.out.println("Releasing Parking Slot..");
                 slot.releaseParkingSlot(slotID);
                 isParked = false;
             }
-            else if(option == 2)
+            else if (option == 2)
                 System.out.println("This Parking Slot is not occupied!");
             else
+            {
                 System.out.println("Wrong input!");
+            }
         }
     }
 }
