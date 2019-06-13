@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"></link>
+
+</h:head>
+<h:body>
+    <div class="container">
+        <div class="navbar">
+            <h1><span style="color: #000dd6;">SOA</span>Parking</h1>
+            <div>
+                Logged as: <a href="profile.xhtml"><h:outputLabel value="#{UserController.user.name}"/></a>
+            </div>
+        </div>
+
+        <h:form>
+            <h3>Add new employee</h3>
+            <div class="form-group">
+                <label>Login</label>
+                <h:inputText styleClass="form-control" value="#{UserController.userToBeAdded.login}"/>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <h:inputSecret styleClass="form-control" value="#{UserController.userToBeAdded.password}"/>
+            </div>
+            <div class="form-group">
+                <label>Name</label>
+                <h:inputText styleClass="form-control" value="#{UserController.userToBeAdded.name}"/>
+            </div>
+            <div class="form-group">
+                <label>Surname</label>
+                <h:inputText styleClass="form-control" value="#{UserController.userToBeAdded.surname}"/>
+            </div>
+            <div class="form-group">
+                <label>Region number</label>
+                <h:inputText styleClass="form-control" value="#{UserController.userToBeAdded.region}"/>
+            </div>
+            <h:commandButton value="Submit" styleClass="btn btn-primary" action="dashboard">
+                <f:ajax execute="@form" listener="#{UserController.addEmployee()}" />
+            </h:commandButton>
+        </h:form>
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js" ></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" ></script>
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" ></script>
+
+</h:body>
+</html>

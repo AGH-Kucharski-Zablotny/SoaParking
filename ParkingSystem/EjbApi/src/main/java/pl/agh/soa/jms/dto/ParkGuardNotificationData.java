@@ -7,6 +7,15 @@ public class ParkGuardNotificationData implements Serializable {
     private int slotId;
     private String registrationPlate;
     private Date notificationDate;
+    private Integer guardId;
+
+    public Integer getGuardId() {
+        return guardId;
+    }
+
+    public void setGuardId(Integer guardId) {
+        this.guardId = guardId;
+    }
 
     public int getSlotId() {
         return slotId;

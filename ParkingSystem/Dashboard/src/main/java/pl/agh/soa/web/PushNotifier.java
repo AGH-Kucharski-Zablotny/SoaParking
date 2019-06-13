@@ -41,17 +41,10 @@ public class PushNotifier {
         peers.add(asyncContext);
     }
 
-    public void notifyParkNotPayed(ParkGuardNotificationData data) {
+    public void notifyListeners(ParkGuardNotificationData data) {
         for (AsyncContext ac : peers) {
-            try {
-                final ServletOutputStream os = ac.getResponse().getOutputStream();
-                os.print(new Date().toString());
-                ac.complete();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                peers.remove(ac);
-            }
+            ac.complete();
+            peers.remove(ac);
         }
     }
 }

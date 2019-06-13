@@ -20,8 +20,7 @@ import javax.ws.rs.NotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
-import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.EMPTY;
-import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.PARKED;
+import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.*;
 
 @Remote(ParksManagerRemote.class)
 @Startup
@@ -58,7 +57,7 @@ public class ParksManagerBean implements ParksManagerRemote
         try {
             String slotUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.SLOT_MANAGER) + "/" + slotId;
             ParkingSlotData parkingSlot = RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.GET, slotUrl), ParkingSlotData.class);
-            if(parkingSlot == null || parkingSlot.getStatus().equals(PARKED))
+            if(parkingSlot == null || !parkingSlot.getStatus().equals(EMPTY))
             {
                 throw new SlotOccupiedException();
             }
@@ -97,6 +96,7 @@ public class ParksManagerBean implements ParksManagerRemote
             }
             parkingSlot.setStatus(EMPTY);
             RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.PUT, slotUrl, parkingSlot), ParkingSlotData.class);
+            RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.POST, "http://localhost:8080/Dashboard-1.0/jmsNotification"), null);
         } catch (Exception e) {
             throw new EJBException(e);
         }

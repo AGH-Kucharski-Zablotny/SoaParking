@@ -16,6 +16,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 
+import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 import org.jboss.resteasy.core.ServerResponse;
@@ -24,6 +25,7 @@ import pl.agh.soa.dto.UserData;
 import pl.agh.soa.ejb.services.remote.AccountManagerRemote;
 
 @Provider
+@ServerInterceptor
 public class SecurityProvider implements javax.ws.rs.container.ContainerRequestFilter
 {
 

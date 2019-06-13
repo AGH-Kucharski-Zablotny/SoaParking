@@ -30,9 +30,14 @@ public class JmsTmpWorkaround extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String requestObjectJson = req.getReader().lines().collect(Collectors.joining());
+        if (requestObjectJson == null || requestObjectJson.isEmpty()) {
+            pushNotifier.notifyListeners(null);
+            return;
+        }
         ObjectMapper objectMapper = new ObjectMapper();
-        ParkGuardNotificationData msgObj = objectMapper.readValue(req.getReader().lines().collect(Collectors.joining()), ParkGuardNotificationData.class);
+        ParkGuardNotificationData msgObj = objectMapper.readValue(requestObjectJson, ParkGuardNotificationData.class);
         slotNotificationController.addNewNotification(msgObj);
-        pushNotifier.notifyParkNotPayed(msgObj);
+        pushNotifier.notifyListeners(msgObj);
     }
 }

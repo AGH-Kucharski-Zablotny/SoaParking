@@ -30,4 +30,14 @@ public class UsersDAO extends AbstractDAO<UserData> {
         query.setParameter("password", password);
         return (UserData) query.getSingleResult();
     }
+
+    public UserData getAttendantForRegion(Integer regionId) {
+        TypedQuery<UserData> query =
+                entityManager.createQuery(
+                        "SELECT data FROM UserData data WHERE data.role = :role AND data.region = :regionId",
+                        UserData.class);
+        query.setParameter("role", UserData.Roles.EMPLOYEE);
+        query.setParameter("regionId", regionId);
+        return query.getSingleResult();
+    }
 }

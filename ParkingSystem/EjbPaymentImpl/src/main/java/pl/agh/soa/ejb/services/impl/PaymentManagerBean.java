@@ -6,10 +6,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import pl.agh.soa.dao.PaymentsDAO;
 import pl.agh.soa.dao.RatesDAO;
-import pl.agh.soa.dto.ParkingSlotData;
-import pl.agh.soa.dto.ParksData;
-import pl.agh.soa.dto.PaymentsData;
-import pl.agh.soa.dto.RatesData;
+import pl.agh.soa.dto.*;
 import pl.agh.soa.ejb.services.ApplicationManager;
 import pl.agh.soa.ejb.services.remote.PaymentManagerRemote;
 import pl.agh.soa.jms.dto.ParkGuardNotificationData;
@@ -75,10 +72,15 @@ public class PaymentManagerBean implements PaymentManagerRemote {
             slot.setStatus(ParkingSlotData.SlotStatus.PARKED);
             RestClient.sendRequest(RestClient.prepareRequest(HttpPut.METHOD_NAME, slotUrl, slot), ParkingSlotData.class);
             scheduleOverdueCheck(parkToBePayed, payment);
+            sendParkStateChanged();
 
         } catch (UnsupportedEncodingException | JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
+
+    private void sendParkStateChanged() throws UnsupportedEncodingException, JsonProcessingException {
+        RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.POST, "http://localhost:8080/Dashboard-1.0/jmsNotification"), null);
     }
 
     private PaymentsData prepareNewPayment(Date dateBoughtTo, Date paymentDate, ParksData parkToBePayed) {
@@ -156,8 +158,14 @@ public class PaymentManagerBean implements PaymentManagerRemote {
         notification.setSlotId(parkInfo.getParkingSlotData().getId());
         notification.setRegistrationPlate(parkInfo.getRegistrationPlate());
         notification.setNotificationDate(new Date());
-//        context.createProducer().send(topic, notification);
         try {
+            String accountUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.ACCOUNT_MANAGER) + "/employees/regions/" + parkInfo.getParkingSlotData().getRegion();
+            UserData employee = RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.GET, accountUrl), UserData.class);
+            if (employee != null) {
+                notification.setGuardId(employee.getId());
+            }
+//            JMS DOESNT WORK
+//            context.createProducer().send(topic, notification);
             RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.POST, "http://localhost:8080/Dashboard-1.0/jmsNotification", notification), null);
         } catch (JsonProcessingException | UnsupportedEncodingException e) {
             e.printStackTrace();

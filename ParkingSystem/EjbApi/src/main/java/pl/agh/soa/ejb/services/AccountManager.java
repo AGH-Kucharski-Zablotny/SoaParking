@@ -11,4 +11,5 @@ public interface AccountManager {
     void updateUser(UserData user);
     void createUser(UserData user);
     void deleteUser(Integer id);
+    UserData getAttendantForRegion(Integer regionId);
 }

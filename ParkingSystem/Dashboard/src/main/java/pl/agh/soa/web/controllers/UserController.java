@@ -19,7 +19,10 @@ public class UserController implements Serializable {
 
     private UserData user;
 
+    private UserData userToBeAdded = new UserData();
+
     @PostConstruct
+    // FIXME: Delete this
     public void init() {
         user = accountManager.getUser(1);
     }
@@ -34,5 +37,23 @@ public class UserController implements Serializable {
 
     public List<UserData> getAttendants() {
         return accountManager.getAttendants();
+    }
+
+    public boolean isUserAdmin() {
+        return user != null && UserData.Roles.ADMIN.equals(user.getRole());
+    }
+
+    public UserData getUserToBeAdded() {
+        return userToBeAdded;
+    }
+
+    public void setUserToBeAdded(UserData userToBeAdded) {
+        this.userToBeAdded = userToBeAdded;
+    }
+
+    public void addEmployee() {
+        userToBeAdded.setRole(UserData.Roles.EMPLOYEE);
+        accountManager.createUser(userToBeAdded);
+        userToBeAdded = new UserData();
     }
 }

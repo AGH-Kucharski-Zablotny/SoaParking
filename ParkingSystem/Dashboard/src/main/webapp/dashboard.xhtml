@@ -18,13 +18,17 @@
             </div>
         </div>
 
-        <h:form>
-            <div id="slotDashboard">
+        <h:form id="slotDashboard">
+            <div>
                 <h3>Slots dashboard</h3>
                 <h:dataTable value="#{SlotController.items}" var="slot" styleClass="table table-striped">
                     <h:column>
                         <f:facet name="header"><b>Id</b></f:facet>
                         <h:outputLabel value="#{slot.id}" />
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Region</f:facet>
+                        <h:outputLabel value="#{slot.region}" />
                     </h:column>
                     <h:column>
                         <f:facet name="header">Status</f:facet>
@@ -48,40 +52,54 @@
                     </h:column>
                 </h:dataTable>
             </div>
-            <h:commandButton value="refresh" id="slotsDashboardRefresh" style="display: none">
+            <h:commandButton value="refresh" id="refreshSlots" style="display: none">
+                <f:ajax render="@form"/>
+            </h:commandButton>
+        </h:form>
+<br/>
+        <hr/>
+        <br/>
+        <h:form id="attendantDashboard" rendered="#{UserController.isUserAdmin()}">
+            <div>
+                <div class="row">
+                    <h3 class="col-sm-10">Employees dashboard</h3>
+                    <a href="addEmployee.xhtml" class="btn btn-primary col-sm-2">Add Employee</a>
+                </div>
+                <h:dataTable value="#{UserController.attendants}" var="attendant" styleClass="table table-striped">
+                    <h:column>
+                        <f:facet name="header">Id</f:facet>
+                        <h:outputLabel value="#{attendant.id}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Name</f:facet>
+                        <h:outputLabel value="#{attendant.name}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Surname</f:facet>
+                        <h:outputLabel value="#{attendant.surname}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Region</f:facet>
+                        <h:outputLabel value="#{attendant.region}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Notification</f:facet>
+                        <h:outputLabel value="#{SlotNotificationController.displayNotificationText(attendant.id)}"/>
+                    </h:column>
+                </h:dataTable>
+            </div>
+            <h:commandButton value="refresh" id="refreshAttendants" style="display: none">
                 <f:ajax render="@form"/>
             </h:commandButton>
         </h:form>
 
-        <div id="attendantDashboard">
-            <h:dataTable value="#{UserController.attendants}" var="attendant" styleClass="table table-striped">
-                <h:column>
-                    <f:facet name="header">Id</f:facet>
-                    <h:outputLabel value="#{attendant.id}"/>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Name</f:facet>
-                    <h:outputLabel value="#{attendant.name}"/>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Surname</f:facet>
-                    <h:outputLabel value="#{attendant.surname}"/>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Region</f:facet>
-                    <h:outputLabel value="#{attendant.region}"/>
-                </h:column>
-            </h:dataTable>
-        </div>
-
-        Long Polling result:
-        <div id="longPollingResult"></div>;
         <script type="text/javascript">
             function long_poll() {
                 var req = new XMLHttpRequest();
                 req.open('GET', 'pushPoll');
                 req.onreadystatechange = function () {
-                    document.getElementById('slotsDashboardRefresh').click();
+                    document.getElementById('slotDashboard:refreshSlots').click();
+                    document.getElementById('attendantDashboard:refreshAttendants').click();
                     long_poll();
                 };
                 req.send();

@@ -32,7 +32,7 @@ public class SendAttendantListener implements MessageListener {
             Serializable msgObj = ((ObjectMessage) message).getObject();
             if (msgObj instanceof ParkGuardNotificationData) {
                 slotNotificationController.addNewNotification((ParkGuardNotificationData) msgObj);
-                pushNotifier.notifyParkNotPayed((ParkGuardNotificationData) msgObj);
+                pushNotifier.notifyListeners((ParkGuardNotificationData) msgObj);
             }
 
         } catch (JMSException e) {
