@@ -48,7 +48,7 @@
                     </h:column>
                     <h:column>
                         <f:facet name="header">Alert</f:facet>
-                        <h:outputLabel value="#{SlotNotificationController.getNotificationForSlot(slot.id).registrationPlate != null and slot.status != 'E' ? 'Not payed' : ''}"/>
+                        <h:outputLabel value="#{SlotNotificationController.getNotificationForSlot(slot.id).registrationPlate != null and slot.status != 'E' and slot.status != 'P' ? 'Not payed' : ''}"/>
                     </h:column>
                 </h:dataTable>
             </div>

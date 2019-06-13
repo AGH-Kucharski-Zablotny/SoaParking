@@ -14,10 +14,12 @@ import pl.agh.soa.rest.RestClient;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.*;
+import javax.management.*;
 import javax.persistence.NoResultException;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.NotFoundException;
 import java.io.UnsupportedEncodingException;
+import java.lang.management.ManagementFactory;
 import java.util.Date;
 
 import static pl.agh.soa.dto.ParkingSlotData.SlotStatus.*;
@@ -33,7 +35,13 @@ public class ParksManagerBean implements ParksManagerRemote
 
     @PostConstruct
     public void init() {
-        applicationManager.registerApplication(ApplicationManager.Application.PARKS_MANAGER, "http://localhost:8080/EjbParksImpl-1.0/parks");
+        try {
+            Integer port = (Integer) ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=standard-sockets,socket-binding=http"), "port");
+            String url = (String) ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:interface=public"), "inet-address");
+            applicationManager.registerApplication(ApplicationManager.Application.PARKS_MANAGER, "http://" + url + ":" + port + "/EjbParksImpl-1.0/parks");
+        } catch (MBeanException | AttributeNotFoundException | InstanceNotFoundException | ReflectionException | MalformedObjectNameException e) {
+            e.printStackTrace();
+        }
     }
 
     @PreDestroy
@@ -68,6 +76,7 @@ public class ParksManagerBean implements ParksManagerRemote
             String schedulerUrl = applicationManager.getApplicationUrl(ApplicationManager.Application.PAYMENT_MANAGER) + "/scheduler";
             HttpRequestBase request = null;
             try {
+                RestClient.sendRequest(RestClient.prepareRequest(HttpMethod.POST, "http://localhost:8080/Dashboard-1.0/jmsNotification"), null);
                 request = RestClient.prepareRequest(HttpMethod.POST, schedulerUrl, park);
             } catch (JsonProcessingException | UnsupportedEncodingException e) {
                 e.printStackTrace();

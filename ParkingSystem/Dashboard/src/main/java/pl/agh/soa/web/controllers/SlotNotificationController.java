@@ -30,7 +30,7 @@ public class SlotNotificationController implements Serializable {
     public ParkGuardNotificationData getLatestNotificationForGuard(Integer employeeId) {
         return attendantNotifications.stream()
                 .filter(n -> n.getGuardId().equals(employeeId))
-                .min(Comparator.comparing(ParkGuardNotificationData::getNotificationDate))
+                .max(Comparator.comparing(ParkGuardNotificationData::getNotificationDate))
                 .orElse(new ParkGuardNotificationData());
     }
 

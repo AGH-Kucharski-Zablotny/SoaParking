@@ -20,7 +20,7 @@ public class PaymentResource {
 
     @Path("slots/{slotId}")
     @POST
-    public void payForSlot(@PathParam("slotId") int slotId, PayRequest payRequest) {
+    public void payForSlot(PayRequest payRequest) {
         paymentManager.payForSlot(payRequest.getDateBoughtTo(), payRequest.getPaymentDate(), payRequest.getRegistrationPlate());
     }
 
