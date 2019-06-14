@@ -14,6 +14,8 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.ejb.*;
 import javax.persistence.NoResultException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 import java.util.List;
@@ -49,10 +51,10 @@ public class AccountManagerBean implements AccountManagerRemote {
     {
         try
         {
-            String encryptedPassword = encrypt(password, key);
+            String encryptedPassword = encryptMD5(password);
             return UsersDAO.getInstance().getUserByLoginPassword(username, encryptedPassword);
         }
-        catch (NoResultException e)
+        catch (NoResultException | NoSuchAlgorithmException e)
         {
             return null;
         }
@@ -61,15 +63,30 @@ public class AccountManagerBean implements AccountManagerRemote {
     @Override
     public void updateUser(UserData user)
     {
-        user.setPassword(encrypt(user.getPassword(), key));
-        UsersDAO.getInstance().updateItem(user);
+        try {
+            user.setPassword(encryptMD5(user.getPassword()));
+            UsersDAO.getInstance().updateItem(user);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void createUser(UserData user)
     {
-        user.setPassword(encrypt(user.getPassword(), key));
-        UsersDAO.getInstance().addItem(user);
+        try {
+            user.setPassword(encryptMD5(user.getPassword()));
+            UsersDAO.getInstance().addItem(user);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String encryptMD5(String password) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] passwordBytes = password.getBytes();
+        byte[] hash = md.digest(passwordBytes);
+        return new String(Base64.getEncoder().encode(hash));
     }
 
     @Override
