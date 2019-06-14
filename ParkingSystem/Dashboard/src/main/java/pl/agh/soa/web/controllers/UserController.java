@@ -69,4 +69,9 @@ public class UserController implements Serializable {
             user = accountManager.getUserByLogin(login);
         }
     }
+
+    public void updateEmployee() {
+        accountManager.updateUser(userToBeAdded);
+        userToBeAdded = new UserData();
+    }
 }

@@ -72,6 +72,11 @@
                 </div>
                 <h:dataTable value="#{UserController.attendants}" var="attendant" styleClass="table table-striped">
                     <h:column>
+                        <h:commandButton class="btn btn-success" value="Edit" action="editEmployee">
+                            <f:ajax listener="#{UserController.setUserToBeAdded(attendant)}"/>
+                        </h:commandButton>
+                    </h:column>
+                    <h:column>
                         <f:facet name="header">Id</f:facet>
                         <h:outputLabel value="#{attendant.id}"/>
                     </h:column>
