@@ -6,8 +6,16 @@ import pl.agh.soa.ejb.services.ApplicationManager;
 import pl.agh.soa.ejb.services.remote.AccountManagerRemote;
 
 import javax.annotation.PostConstruct;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.ejb.*;
 import javax.persistence.NoResultException;
+import java.security.spec.KeySpec;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +26,9 @@ public class AccountManagerBean implements AccountManagerRemote {
 
     @EJB(lookup = "java:global/ApplicationRouter-1.0/ApplicationManagerBean!pl.agh.soa.ejb.services.ApplicationManager")
     private ApplicationManager applicationManager;
+
+    private static String key = "secretKey";
+    private static String salt = "soaislove";
 
     @PostConstruct
     public void init() {
@@ -38,7 +49,8 @@ public class AccountManagerBean implements AccountManagerRemote {
     {
         try
         {
-            return UsersDAO.getInstance().getUserByLoginPassword(username, password);
+            String encryptedPassword = encrypt(password, key);
+            return UsersDAO.getInstance().getUserByLoginPassword(username, encryptedPassword);
         }
         catch (NoResultException e)
         {
@@ -47,12 +59,16 @@ public class AccountManagerBean implements AccountManagerRemote {
     }
 
     @Override
-    public void updateUser(UserData user) {
+    public void updateUser(UserData user)
+    {
+        user.setPassword(encrypt(user.getPassword(), key));
         UsersDAO.getInstance().updateItem(user);
     }
 
     @Override
-    public void createUser(UserData user) {
+    public void createUser(UserData user)
+    {
+        user.setPassword(encrypt(user.getPassword(), key));
         UsersDAO.getInstance().addItem(user);
     }
 
@@ -73,5 +89,28 @@ public class AccountManagerBean implements AccountManagerRemote {
     @Override
     public UserData getUserByLogin(String login) {
         return UsersDAO.getInstance().getUserByLogin(login);
+    }
+
+    private String encrypt(String toEncrypt, String key)
+    {
+        try
+        {
+            byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            IvParameterSpec ivspec = new IvParameterSpec(iv);
+
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            KeySpec spec = new PBEKeySpec(key.toCharArray(), salt.getBytes(), 65536, 256);
+            SecretKey tmp = factory.generateSecret(spec);
+            SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
+            return Base64.getEncoder().encodeToString(cipher.doFinal(toEncrypt.getBytes("UTF-8")));
+        }
+        catch (Exception e)
+        {
+            System.out.println("Error while encrypting: " + e.toString());
+        }
+        return null;
     }
 }
