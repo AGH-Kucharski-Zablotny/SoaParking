@@ -4,7 +4,9 @@ import pl.agh.soa.dto.UserData;
 import pl.agh.soa.ejb.services.remote.AccountManagerRemote;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.SessionContext;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -23,12 +25,14 @@ public class UserController implements Serializable {
     private UserData userToBeAdded = new UserData();
 
     @PostConstruct
-    // FIXME: Delete this
     public void init() {
-        user = accountManager.getUser(1);
+        user = new UserData();
     }
 
     public UserData getUser() {
+        if (user != null && user.getId() == 0 && user.getLogin() != null && user.getPassword() != null) {
+            user = accountManager.getUserByUsernamePassword(user.getLogin(), user.getPassword());
+        }
         return user;
     }
 
@@ -65,5 +69,14 @@ public class UserController implements Serializable {
     public void updateUser() {
         accountManager.updateUser(user);
         user = accountManager.getUser(user.getId());
+    }
+
+    public void loginUser() {
+        if (user.getLogin() != null && user.getPassword() != null) {
+            user = accountManager.getUserByUsernamePassword(user.getLogin(), user.getPassword());
+        }
+        else {
+            user = new UserData();
+        }
     }
 }

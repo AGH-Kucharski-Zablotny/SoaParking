@@ -14,7 +14,7 @@
         <div class="navbar">
             <h1><span style="color: #000dd6;">SOA</span>Parking</h1>
             <div>
-                Logged as: <a href="profile.xhtml"><h:outputLabel value="#{UserController.user.name}"/></a>
+                Logged as: <a href="profile.xhtml"><h:outputLabel value="#{request.remoteUser}"/></a>
             </div>
         </div>
 
@@ -56,7 +56,7 @@
                 <f:ajax render="@form"/>
             </h:commandButton>
         </h:form>
-        <h:form id="attendantDashboard" rendered="#{UserController.isUserAdmin()}">
+        <h:form id="attendantDashboard" rendered="#{request.isUserInRole('ADMIN')}">
             <br/>
             <hr/>
             <br/>
@@ -93,7 +93,7 @@
             </h:commandButton>
         </h:form>
 
-        <h:form id="parkingRatesSetForm" rendered="#{UserController.userAdmin}">
+        <h:form id="parkingRatesSetForm" rendered="#{request.isUserInRole('ADMIN')}">
             <br/>
             <hr/>
             <br/>
