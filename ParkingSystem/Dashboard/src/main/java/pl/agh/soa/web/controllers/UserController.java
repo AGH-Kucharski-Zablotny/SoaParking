@@ -24,16 +24,9 @@ public class UserController implements Serializable {
 
     private UserData userToBeAdded = new UserData();
 
-    @PostConstruct
-    public void init() {
-        user = new UserData();
-    }
 
     public UserData getUser() {
-        if (user != null && user.getId() == 0 && user.getLogin() != null && user.getPassword() != null) {
-            user = accountManager.getUserByUsernamePassword(user.getLogin(), user.getPassword());
-        }
-        return user;
+         return user;
     }
 
     public void setUser(UserData user) {
@@ -71,12 +64,9 @@ public class UserController implements Serializable {
         user = accountManager.getUser(user.getId());
     }
 
-    public void loginUser() {
-        if (user.getLogin() != null && user.getPassword() != null) {
-            user = accountManager.getUserByUsernamePassword(user.getLogin(), user.getPassword());
-        }
-        else {
-            user = new UserData();
+    public void loginUser(String login) {
+        if (user == null) {
+            user = accountManager.getUserByLogin(login);
         }
     }
 }

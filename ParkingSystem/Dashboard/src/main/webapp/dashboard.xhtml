@@ -6,6 +6,9 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <h:head>
+    <f:metadata>
+        <f:event listener="#{UserController.loginUser(request.remoteUser)}" type="preRenderView"/>
+    </f:metadata>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"></link>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </h:head>
@@ -14,7 +17,9 @@
         <div class="navbar">
             <h1><span style="color: #000dd6;">SOA</span>Parking</h1>
             <div>
-                Logged as: <a href="profile.xhtml"><h:outputLabel value="#{request.remoteUser}"/></a>
+                Logged as: <a href="profile.xhtml"><h:outputLabel value="#{UserController.user.name.concat(' ').concat(UserController.user.surname)}"/></a>
+                <br/>
+                <a href="logout.xhtml">Log out</a>
             </div>
         </div>
 

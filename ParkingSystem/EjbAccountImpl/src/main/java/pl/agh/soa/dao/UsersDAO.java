@@ -2,6 +2,7 @@ package pl.agh.soa.dao;
 
 import pl.agh.soa.dto.UserData;
 
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 public class UsersDAO extends AbstractDAO<UserData> {
@@ -39,5 +40,18 @@ public class UsersDAO extends AbstractDAO<UserData> {
         query.setParameter("role", UserData.Roles.EMPLOYEE);
         query.setParameter("regionId", regionId);
         return query.getSingleResult();
+    }
+
+    public UserData getUserByLogin(String login) {
+        TypedQuery<UserData> query =
+                entityManager.createQuery(
+                        "SELECT data FROM UserData data WHERE data.login = :login",
+                        UserData.class);
+        query.setParameter("login", login);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }

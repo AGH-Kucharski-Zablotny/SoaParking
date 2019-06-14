@@ -2,6 +2,7 @@ package pl.agh.soa.ejb.services;
 
 import pl.agh.soa.dto.UserData;
 
+import javax.xml.registry.infomodel.User;
 import java.util.List;
 
 public interface AccountManager {
@@ -12,4 +13,5 @@ public interface AccountManager {
     void createUser(UserData user);
     void deleteUser(Integer id);
     UserData getAttendantForRegion(Integer regionId);
+    UserData getUserByLogin(String login);
 }

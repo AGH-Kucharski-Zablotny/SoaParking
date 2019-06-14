@@ -14,7 +14,9 @@
         <div class="navbar">
             <h1><span style="color: #000dd6;">SOA</span>Parking</h1>
             <div>
-                Logged as: <a href="profile.xhtml"><h:outputLabel value="#{UserController.user.name}"/></a>
+                Logged as: <a href="profile.xhtml"><h:outputLabel value="#{UserController.user.name.concat(' ').concat(UserController.user.surname)}"/></a>
+                <br/>
+                <a href="logout.xhtml">Log out</a>
             </div>
         </div>
 

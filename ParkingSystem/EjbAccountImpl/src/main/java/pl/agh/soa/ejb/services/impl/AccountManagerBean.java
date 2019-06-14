@@ -69,4 +69,9 @@ public class AccountManagerBean implements AccountManagerRemote {
     public UserData getAttendantForRegion(Integer regionId) {
         return UsersDAO.getInstance().getAttendantForRegion(regionId);
     }
+
+    @Override
+    public UserData getUserByLogin(String login) {
+        return UsersDAO.getInstance().getUserByLogin(login);
+    }
 }
