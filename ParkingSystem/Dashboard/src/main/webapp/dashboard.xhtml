@@ -125,13 +125,39 @@
             </h:dataTable>
         </h:form>
 
+        <h:form id="employeeNotification" rendered="#{request.isUserInRole('EMPLOYEE')}">
+            <h:dataTable value="#{SlotNotificationController.getNotificationsForGuard(UserController.user.id)}" var="notif" styleClass="table table-striped">
+                <h:column>
+                    <f:facet name="header">Notification date</f:facet>
+                    <h:outputLabel value="#{notif.notificationDate}" />
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Text</f:facet>
+                    <h:outputLabel value="#{SlotNotificationController.displayNotificationText(notif)}" />
+                </h:column>
+            </h:dataTable>
+            <h:commandButton value="refresh" id="refreshNotifications" style="display: none">
+                <f:ajax render="@form"/>
+            </h:commandButton>
+        </h:form>
+
         <script type="text/javascript">
             function long_poll() {
                 var req = new XMLHttpRequest();
                 req.open('GET', 'pushPoll');
                 req.onreadystatechange = function () {
-                    document.getElementById('slotDashboard:refreshSlots').click();
-                    document.getElementById('attendantDashboard:refreshAttendants').click();
+                    var slotRefreshBtn = document.getElementById('slotDashboard:refreshSlots');
+                    var attendantsRefreshBtn = document.getElementById('attendantDashboard:refreshAttendants');
+                    var notificationsRefreshBtn = document.getElementById('employeeNotification:refreshNotifications');
+                    if (slotRefreshBtn != null) {
+                        slotRefreshBtn.click();
+                    }
+                    if (attendantsRefreshBtn != null) {
+                        attendantsRefreshBtn.click();
+                    }
+                    if (notificationsRefreshBtn != null) {
+                        notificationsRefreshBtn.click();
+                    }
                     long_poll();
                 };
                 req.send();

@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 @Named("SlotNotificationController")
 @ApplicationScoped
@@ -22,9 +23,11 @@ public class SlotNotificationController implements Serializable {
         attendantNotifications.add(data);
     }
 
-    public ParkGuardNotificationData getNotificationForGuard(Integer empolyeeId) {
-
-        return null;
+    public List<ParkGuardNotificationData> getNotificationsForGuard(Integer guardId) {
+        return attendantNotifications.stream()
+                .filter(n -> n.getGuardId().equals(guardId))
+                .sorted(Comparator.comparing(ParkGuardNotificationData::getNotificationDate).reversed())
+                .collect(Collectors.toList());
     }
 
     public ParkGuardNotificationData getLatestNotificationForGuard(Integer employeeId) {
@@ -46,6 +49,19 @@ public class SlotNotificationController implements Serializable {
             return "";
         }
     }
+
+    public String displayNotificationText(ParkGuardNotificationData notificationData) {
+        if (notificationData.getRegistrationPlate() != null) {
+            return "Car with registration number " +
+                    notificationData.getRegistrationPlate() +
+                    " is parked without payment on slot " +
+                    notificationData.getSlotId() +
+                    ". Go and check that car.";
+        } else {
+            return "";
+        }
+    }
+
 
     public ParkGuardNotificationData getNotificationForSlot(Integer slotId) {
         return attendantNotifications.stream()

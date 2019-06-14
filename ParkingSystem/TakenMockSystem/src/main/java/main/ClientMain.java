@@ -41,7 +41,7 @@ public class ClientMain
                 slot.takeParkingSlot(slotID, registrationPlate);
                 isParked = true;
             }
-            else if (option == 2 && isParked)
+            else if (option == 2)
             {
                 System.out.println("Releasing Parking Slot..");
                 slot.releaseParkingSlot(slotID);

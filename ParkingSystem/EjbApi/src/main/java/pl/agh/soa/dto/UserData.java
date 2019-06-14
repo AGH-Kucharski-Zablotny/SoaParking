@@ -62,7 +62,8 @@ public class UserData extends AbstractDTO
 
     public void setPassword(String password)
     {
-        this.password = password;
+        if (password != null && !password.isEmpty())
+            this.password = password;
     }
 
     public String getName()
